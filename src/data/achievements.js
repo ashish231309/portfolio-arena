@@ -1,0 +1,57 @@
+export const achievements = [
+  {
+    id: 'ncc',
+    kind: 'Service',
+    title: 'National Cadet Corps (NCC)',
+    period: '2021 — ~3 years of service',
+    accent: 'lime',
+    span: 'wide',
+    body: 'Three years of NCC training — two years in school and one year in college — including attended NCC camps. Completed the B and C certificate examinations. Discipline, teamwork, communication and responsibility, practised rather than preached.',
+    highlights: ['NCC B Certificate', 'NCC C Certificate', '2 yrs school + 1 yr college', 'Attended NCC camps'],
+  },
+  {
+    id: 'marathon',
+    kind: 'Sport · Result',
+    title: '3 km Mini Marathon — First Runner-Up',
+    period: 'College induction programme (SRIJAN 2023-24)',
+    accent: 'coral',
+    span: 'tall',
+    body: 'First Runner-Up in the boys’ category 3 km mini marathon held under the student induction programme — earned in the first weeks of college, before knowing anyone.',
+    highlights: ['First Runner-Up', 'Boys category', '3 km'],
+  },
+  {
+    id: 'badminton',
+    kind: 'Sport · Participation',
+    title: 'KSS Inter-School Badminton',
+    period: 'September 8–10 · CBSE Kanpur Sahodaya Schools',
+    accent: 'indigo',
+    span: 'normal',
+    body: 'Represented school at the KSS inter-school badminton competition organised by CBSE Kanpur Sahodaya Schools, hosted at Scholar Mission School, Kanpur. Participation.',
+    highlights: ['Inter-school representation', 'Participation'],
+  },
+  {
+    id: 'basketball',
+    kind: 'Sport · Participation',
+    title: 'National Sports Day 2026 — Basketball',
+    period: 'Kanpur Institute of Technology',
+    accent: 'cobalt',
+    span: 'normal',
+    body: 'Played in the college basketball events during National Sports Day 2026 (24–29 August 2026). Participation.',
+    highlights: ['College basketball', 'Participation'],
+  },
+  {
+    id: 'coordination',
+    kind: 'Leadership · School',
+    title: 'Inter-House Badminton Coordination',
+    period: 'Army Public School, Kanpur',
+    accent: 'cyan',
+    span: 'wide',
+    body: 'Given the opportunity by my sports teacher, I helped host and coordinate the inter-house badminton competition: match schedules, who played whom, match flow — and officiating as referee through the finals.',
+    highlights: ['Match scheduling', 'Fixture coordination', 'Refereed matches'],
+  },
+]
+
+export const traits = [
+  'Teamwork', 'Communication', 'Coordination', 'Discipline',
+  'Consistent learning', 'Project building', 'Curiosity',
+]

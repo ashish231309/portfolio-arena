@@ -1,0 +1,82 @@
+export const projects = [
+  {
+    slug: 'coding-ninjas',
+    title: 'Coding Ninjas Website Recreation',
+    shortTitle: 'Coding Ninjas',
+    featured: true,
+    category: 'Frontend Website Recreation',
+    label: 'Website Recreation',
+    year: 'September 2026',
+    tech: ['React 19', 'Vite 8', 'Tailwind CSS 3.4'],
+    github: 'https://github.com/ashish1492a/Coding-ninjas',
+    live: null,
+    status: ['Available on GitHub', 'No live deployment yet'],
+    summary:
+      'A responsive frontend recreation inspired by the Coding Ninjas website — built to practise modern frontend development: reusable React components, responsive layouts and a Tailwind CSS design system across fifteen distinct sections.',
+    description: [
+      'This project is my frontend practice ground: a section-by-section recreation of a real, content-heavy education website. Every band — navbar, hero, course finder, course rails, testimonials, news, footer — is built as its own reusable React component with its own layout logic.',
+      'The goal was never to copy a brand. It was to study how a production marketing site is assembled: asymmetric hero composition, horizontally scrolling course rails, sticky floating actions, testimonial carousels, and a footer that still feels designed — then rebuild those patterns myself with React 19, Vite and Tailwind CSS.',
+      'It is openly labelled a recreation: no affiliation with, endorsement by, or partnership with Coding Ninjas is implied, and no backend, auth or payment logic exists behind it.',
+    ],
+    sections: [
+      'Navbar', 'Hero', 'Course Finder', 'Explore Courses', 'Project Marquee', 'AI Infused',
+      'Next Gen Learning', 'Nine Years', 'Testimonials', 'TenX Club', 'Career CTA',
+      'In The News', 'Trusted By', 'Footer', 'Floating Bar',
+    ],
+    implementation: [
+      { title: 'Component-per-section architecture', body: 'Fifteen page bands modelled as individual React components composed into a single page flow, keeping layouts isolated and reusable.' },
+      { title: 'Tailwind as a design system', body: 'A shared token layer (color, type scale, radii, spacing) drives every section so the recreation stays visually consistent end to end.' },
+      { title: 'Responsive layout practise', body: 'Course rails, hero composition and the course-finder panel re-flow deliberately from mobile to wide desktop instead of simply shrinking.' },
+      { title: 'Interaction layer', body: 'Carousel controls, tab-style audience toggles, category filter chips and a floating action bar — frontend behaviour only, no invented backend.' },
+    ],
+    gallery: [
+      { src: '/projects/coding-ninjas/cn-01.png', alt: 'Coding Ninjas recreation — hero section with headline and tool marquee' },
+      { src: '/projects/coding-ninjas/cn-02.png', alt: 'Coding Ninjas recreation — course finder form panel' },
+      { src: '/projects/coding-ninjas/cn-03.png', alt: 'Coding Ninjas recreation — explore courses track with course cards' },
+      { src: '/projects/coding-ninjas/cn-04.png', alt: 'Coding Ninjas recreation — AI infused curriculum section' },
+      { src: '/projects/coding-ninjas/cn-05.png', alt: 'Coding Ninjas recreation — 10X Club community section' },
+      { src: '/projects/coding-ninjas/cn-06.png', alt: 'Coding Ninjas recreation — student reviews and ratings' },
+      { src: '/projects/coding-ninjas/cn-07.png', alt: 'Coding Ninjas recreation — industry press and footer' },
+    ],
+    scrollFrames: [0, 2, 4, 6],
+  },
+  {
+    slug: 'bmw',
+    title: 'BMW Website Recreation',
+    shortTitle: 'BMW',
+    featured: false,
+    category: 'Frontend Website Recreation',
+    label: 'Website Recreation',
+    year: '2025',
+    tech: ['HTML', 'CSS', 'JavaScript'],
+    github: null,
+    live: null,
+    status: ['Not hosted', 'Not on GitHub yet'],
+    summary:
+      'A responsive multi-page recreation of a BMW-style marketing site in plain HTML, CSS and JavaScript — seven pages, each with dedicated stylesheets, including a dealer map page and a video-backed landing page.',
+    description: [
+      'Before React, I learned the platform itself. This recreation is built with semantic HTML, hand-written CSS per page, and a deliberately small amount of JavaScript — forms, navigation and map embedding rather than frameworks.',
+      'Seven pages exist: a card page, the index landing with an M5 Competition background video, login and register forms, a dealer-locator map page, a request (test-drive) form and a search page. Each page carries its own stylesheet, which taught me how quickly CSS sprawls without a system — a lesson I later carried into Tailwind.',
+      'This is an unofficial study project. No affiliation with, endorsement by, or partnership with BMW is implied. It is not hosted and not published on GitHub at this time.',
+    ],
+    pages: ['card', 'index', 'login', 'map', 'register', 'request', 'search'],
+    implementation: [
+      { title: 'Multi-page architecture', body: 'Seven linked pages with dedicated per-page CSS files — an exercise in keeping hand-written styles organised without a framework.' },
+      { title: 'Media-heavy landing', body: 'Full-bleed hero treatment with a background video asset and layered imagery, balanced against readable overlay content.' },
+      { title: 'Forms & map integration', body: 'Login, register and test-drive request forms plus an embedded dealer map page — frontend behaviour only.' },
+      { title: 'Responsive behaviour', body: 'Layouts adapt from mobile to desktop with media queries written by hand, page by page.' },
+    ],
+    gallery: [
+      { src: '/projects/bmw/bmw-01.jpeg', alt: 'BMW recreation — model hero with full-bleed car imagery' },
+      { src: '/projects/bmw/bmw-02.jpeg', alt: 'BMW recreation — diagonal split model showcase' },
+      { src: '/projects/bmw/bmw-03.jpeg', alt: 'BMW recreation — dealer locator map page' },
+      { src: '/projects/bmw/bmw-04.jpeg', alt: 'BMW recreation — model listing with price filters' },
+      { src: '/projects/bmw/bmw-05.jpeg', alt: 'BMW recreation — special offers panel' },
+      { src: '/projects/bmw/bmw-06.jpeg', alt: 'BMW recreation — book a test drive form' },
+      { src: '/projects/bmw/bmw-07.jpeg', alt: 'BMW recreation — search and footer' },
+    ],
+    scrollFrames: [0, 2, 4],
+  },
+]
+
+export const getProject = (slug) => projects.find((p) => p.slug === slug)
