@@ -3,11 +3,12 @@
   "private": true,
   "version": "2.0.0",
   "type": "module",
-  "description": "Interactive portfolio of Ashish Kumar — Computer Science student building with Software, Web & Generative AI.",
+  "description": "Interactive portfolio of Ashish Kumar \u2014 Computer Science student building with Software, Web & Generative AI.",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 4173"
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "check:meta": "node qa/check-metadata.mjs"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.2.5",
