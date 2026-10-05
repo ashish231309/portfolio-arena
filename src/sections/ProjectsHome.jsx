@@ -9,8 +9,6 @@ import Magnetic from '../components/Magnetic'
 import { projects } from '../data/projects'
 import { EASE } from '../lib/motion'
 
-const FRAME_LABELS = ['hero & narrative', 'course finder', 'course rails', 'ai curriculum', 'community', 'reviews', 'press & footer']
-
 function FeaturedStory({ project }) {
   const [frame, setFrame] = useState(0)
   const blockRefs = useRef([])
@@ -50,7 +48,7 @@ function FeaturedStory({ project }) {
                   />
                 </AnimatePresence>
                 <span className="absolute bottom-3 left-3 rounded-full bg-ink/80 backdrop-blur px-3 py-1 font-mono text-[10px] tracking-[0.16em] uppercase text-cyan">
-                  {String(frame + 1).padStart(2, '0')} / {FRAME_LABELS[frame]}
+                  {String(frame + 1).padStart(2, '0')} / {project.gallery[frame]?.label ?? `frame ${frame + 1}`}
                 </span>
               </div>
             </div>

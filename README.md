@@ -59,11 +59,20 @@ src/data/achievements.js    NCC / sport / coordination + traits
 
 ```
 public/resume.pdf                       résumé (Download Resume CTA)
-public/projects/coding-ninjas/cn-*.png  featured project screenshots
-public/projects/bmw/bmw-*.jpeg          BMW recreation screenshots
+public/projects/<slug>/                 screenshots for that project — nothing else
 public/certificates/*.pdf               PUBLIC digital certificates only
 public/favicon.svg                      brand mark
 ```
+
+**Naming pattern:** `<project-slug>-NN-<content>.<ext>` — e.g. `coding-ninjas-03-course-rails.jpeg`,
+`bmw-01-hero-5-series.png`.
+
+- `NN` is a two-digit number that sets the order (01, 02, 03 …).
+- `<content>` names the section the screenshot shows.
+- One folder per project: `public/projects/bmw/` holds **only** BMW files,
+  `public/projects/coding-ninjas/` holds **only** Coding Ninjas files.
+- **One `gallery` array per project, in page order**, and every screenshot on disk must be
+  referenced exactly once. `alt` text must describe what is actually visible in that image.
 
 ⚠️ **Physical certificates (NCC B/C, school & college sport) are intentionally NOT in `public/`.** They are represented as text under Activities only. Do not add their images/files to `public/`.
 

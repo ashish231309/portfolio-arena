@@ -12,9 +12,16 @@ Everything editable lives in `src/data/*.js` and `public/`. Components read from
 ## 2. Add / edit a project
 `src/data/projects.js`
 1. Add an object: `slug, title, category, label ('Website Recreation'), year, tech[], github|null, live|null, status[], summary, description[], implementation[], gallery[]`.
-2. Put screenshots in `public/projects/<slug>/` and reference as `/projects/<slug>/file.png`.
-3. `scrollFrames` maps the home sticky-story blocks to gallery indices.
-4. Rules: no fake live-demo button (`live: null`), recreation label always present, GitHub only if the repo is public.
+2. Put screenshots in `public/projects/<slug>/` — that folder holds **only** that project's files — and
+   name them `<project-slug>-NN-<content>.<ext>`, e.g. `coding-ninjas-03-course-rails.jpeg` or
+   `bmw-01-hero-5-series.png`. `NN` is the two-digit order (01, 02, 03 …); `<content>` says which
+   section the image shows.
+3. Reference each one as `/projects/<slug>/<file>` in that project's `gallery[]`: **one gallery array
+   per project, in page order**, every screenshot referenced exactly once. Each item is
+   `{ src, alt, label }` — `alt` must describe **what is actually visible** in the image, and `label`
+   is the short caption shown by the home sticky story (read from data, not hardcoded).
+4. `scrollFrames` maps the home sticky-story blocks to gallery indices — update it when the gallery grows or shrinks.
+5. Rules: no fake live-demo button (`live: null`), recreation label always present, GitHub only if the repo is public.
 
 ## 3. Experience & simulations
 `src/data/experience.js`
