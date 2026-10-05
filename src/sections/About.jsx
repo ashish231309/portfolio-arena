@@ -1,8 +1,8 @@
 import { motion } from 'motion/react'
-import { Terminal, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import Section, { container, sectionPadding } from '../components/Section'
 import SectionHead from '../components/SectionHead'
-import { WordReveal, Fade, Parallax, Stagger, StaggerItem } from '../components/Reveal'
+import { WordReveal, Fade, Parallax } from '../components/Reveal'
 import { profile } from '../data/profile'
 
 function TerminalCard() {

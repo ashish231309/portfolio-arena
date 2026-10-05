@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import { MaskLines, Fade } from './Reveal'
 import { accentBg } from '../lib/motion'
 

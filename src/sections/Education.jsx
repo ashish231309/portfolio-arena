@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { GraduationCap, School } from 'lucide-react'
 import Section, { container, sectionPadding } from '../components/Section'
 import SectionHead from '../components/SectionHead'
-import { Fade, Stagger, StaggerItem } from '../components/Reveal'
+import { Fade } from '../components/Reveal'
 import { education, } from '../data/education'
 import { coursework } from '../data/skills'
 

@@ -1,4 +1,4 @@
-import { useSectionSignal, useSite } from '../lib/site'
+import { useSectionSignal } from '../lib/site'
 import AmbientGlow from './AmbientGlow'
 import { ACCENTS } from '../lib/motion'
 

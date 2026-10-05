@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, MotionConfig } from 'motion/react'
 import Lenis from 'lenis'
 import { SiteProvider } from './lib/site'
 import { useReducedMotionPref } from './hooks/useMediaQuery'
+import ErrorBoundary from './components/ErrorBoundary'
 import Cursor from './components/Cursor'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
@@ -70,15 +71,19 @@ export default function App() {
   }, [location.pathname])
 
   return (
-    <SiteProvider>
-      <Intro />
-      <ScrollProgress />
-      <Cursor />
-      <Nav />
-      <AnimatedRoutes />
-      <Footer />
-      {/* film grain */}
-      <div className="noise-layer pointer-events-none fixed inset-0 z-[80] opacity-[0.05] mix-blend-multiply" aria-hidden="true" />
-    </SiteProvider>
+    <MotionConfig reducedMotion="user">
+      <SiteProvider>
+        <Intro />
+        <ScrollProgress />
+        <Cursor />
+        <Nav />
+        <ErrorBoundary key={location.pathname}>
+          <AnimatedRoutes />
+        </ErrorBoundary>
+        <Footer />
+        {/* film grain */}
+        <div className="noise-layer pointer-events-none fixed inset-0 z-[80] opacity-[0.05] mix-blend-multiply" aria-hidden="true" />
+      </SiteProvider>
+    </MotionConfig>
   )
 }

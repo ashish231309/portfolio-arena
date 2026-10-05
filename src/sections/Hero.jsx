@@ -7,7 +7,6 @@ import Magnetic from '../components/Magnetic'
 import { MaskLines, Fade, Parallax } from '../components/Reveal'
 import { useSite } from '../lib/site'
 import { useFinePointer, useReducedMotionPref } from '../hooks/useMediaQuery'
-import { EASE } from '../lib/motion'
 
 function OrbitVisual() {
   const { px, py } = useSite()
