@@ -157,13 +157,47 @@ Left for your local test (browser-only):
 3. Do the BMW frames look identical to before, and is the featured mockup uncropped at 16/9?
 4. Do the lazy route chunks load correctly against the production preview
    (`npm run build && npm run preview` — opening `dist/index.html` directly will not work).
+5. Does `ysf-internship-certificate.pdf` still open and look right (it is now 1.00 MB
+   instead of 4.54 MB) — check the on-site link and, ideally, a downloaded copy in your
+   usual PDF viewer.
 
 ---
 
-## 7. Pending your decision — certificate PDF (no change made)
+## 7. Certificate PDF — texture recompression (applied)
 
-`public/certificates/ysf-internship-certificate.pdf` is 4,540,745 B; 92.6% of it is one
-paper-texture JPEG. The before/after comparison (full-sheet renders, 300 DPI text zoom,
-1:1 texture zoom, pixel-difference statistics) is in
-`audit/s6-certificate-pdf-before-after.pdf`. Nothing in `public/` has been modified.
-The ready-to-run tool is `audit/tools/pdf-texture-recompress.py`.
+`public/certificates/ysf-internship-certificate.pdf` measured 4,539,745 B, of which
+**92.6% was one paper-texture JPEG**. All readable content is vector text drawn on top
+of that texture, so re-encoding the texture cannot blur any text. Two facts made the
+reduction cheap: the texture is stored at 4608x3376 but drawn 1.96x wider than the page
+(46.6% of its pixels were never on screen), and it lands at 284 DPI on the page.
+
+Applied preset (the "C2" option from the before/after comparison, re-encoded baseline
+rather than progressive for maximum viewer compatibility):
+
+| | before | after |
+|---|---:|---:|
+| file size | 4,539,745 B (4.54 MB) | **998,983 B (1.00 MB)** |
+| stored texture | 4608 x 3376 (4,204,633 B JPEG) | 1723 x 2363 (663,863 B JPEG, q88, 4:2:0) |
+| texture area kept | — | the visible 2461 px of 4608 (46.6% dropped) |
+| texture detail | 284 DPI | 199 DPI over the same 8.66 in |
+| certificates folder | 7,677,684 B | 2,631,577 B |
+
+**−78.0%, 3.54 MB saved.** Verification (all printed by the tool at run time):
+
+- **Render comparison, PDFium:** 150 DPI max diff 22/255, PSNR 46.0 dB · 200 DPI 22/255,
+  45.8 dB · 300 DPI 15/255, 47.1 dB. 0.037% / 0.020% / 0.002% of pixels differ by more than 8/255.
+- **Extracted text identical** (495 chars) in PDFium, and identical via pypdf as well
+  (180 words, same first words) — no readable content moved.
+- **Only 2 objects changed** (the texture and the one form that places it); no objects
+  added or removed; all other 27 streams byte-identical.
+- **Page count, MediaBox (596 x 850 pt), tagged-PDF structure (20 /StructElem) and the
+  ICC profile are unchanged**; `check_pdf_syntax` passes.
+- **`npm run check:meta`** still reports 0 files with metadata across 42 files.
+
+The comparison evidence (`audit/s6-certificate-pdf-before-after.pdf`) was produced
+*before* approval and still shows the original 4.54 MB file as "before". The tool is
+`audit/tools/pdf-texture-apply.py` — it derives the geometry from the file itself
+(interpreting the content streams' `q`/`Q`/`cm` state rather than assuming a layout),
+asserts the visible rectangle is unchanged (measured offset 0.000 pt; it aborts past 0.5 pt),
+and refuses to
+finish if anything but the texture and its placement form changed.
