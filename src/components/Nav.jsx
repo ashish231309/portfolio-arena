@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X, ArrowUpRight, FileDown } from 'lucide-react'
 import { navLinks, profile } from '../data/profile'
 import { useSite } from '../lib/site'
+import { useLenis } from '../lib/scroll'
 import Magnetic from './Magnetic'
 import { EASE } from '../lib/motion'
 
@@ -12,7 +13,12 @@ export default function Nav() {
   const [open, setOpen] = useState(false)
   const { tone } = useSite()
   const location = useLocation()
+  const lenis = useLenis()
   const firstLink = useRef(null)
+  const toggleRef = useRef(null)
+  const headerRef = useRef(null)
+  const overlayRef = useRef(null)
+  const wasOpen = useRef(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -23,19 +29,76 @@ export default function Nav() {
 
   useEffect(() => setOpen(false), [location.pathname])
 
+  // Mobile menu: pause the one scroll engine, lock the body, move focus in,
+  // keep Tab inside the menu, and hand focus back to the toggle on close.
   useEffect(() => {
     if (open) {
+      wasOpen.current = true
       firstLink.current?.focus()
       document.body.style.overflow = 'hidden'
+      lenis?.stop()
     } else {
       document.body.style.overflow = ''
+      lenis?.start()
+      if (wasOpen.current) {
+        wasOpen.current = false
+        toggleRef.current?.focus()
+      }
     }
-    const onKey = (e) => e.key === 'Escape' && setOpen(false)
-    window.addEventListener('keydown', onKey)
     return () => {
-      window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
+  }, [open, lenis])
+
+  // Keep the page behind the overlay out of the tab order and off the a11y tree.
+  // (The header stays interactive because it holds the close button, which is
+  // part of the focus trap below.)
+  useEffect(() => {
+    if (!open) return undefined
+    const behind = [document.getElementById('main'), document.querySelector('footer')].filter(Boolean)
+    behind.forEach((el) => {
+      el.setAttribute('inert', '')
+      el.setAttribute('aria-hidden', 'true')
+    })
+    return () =>
+      behind.forEach((el) => {
+        el.removeAttribute('inert')
+        el.removeAttribute('aria-hidden')
+      })
+  }, [open])
+
+  // Tab trap: cycles through the visible menu links, the header logo and the
+  // close toggle. Nothing behind the overlay is reachable.
+  useEffect(() => {
+    if (!open) return undefined
+    const visible = (el) => el.getClientRects().length > 0
+    const focusables = () =>
+      [
+        ...headerRef.current.querySelectorAll('a[href], button:not([disabled])'),
+        ...overlayRef.current.querySelectorAll('a[href], button:not([disabled])'),
+      ].filter(visible)
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        return
+      }
+      if (e.key !== 'Tab') return
+      const list = focusables()
+      if (!list.length) return
+      const first = list[0]
+      const last = list[list.length - 1]
+      const active = document.activeElement
+      if (e.shiftKey && (active === first || !list.includes(active))) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (active === last || !list.includes(active))) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
   const dark = tone === 'dark'
@@ -50,11 +113,12 @@ export default function Nav() {
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[120] focus:bg-indigo focus:text-ivory focus:px-4 focus:py-2 focus:rounded-sm2 font-mono text-xs tracking-widest uppercase"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[120] focus:bg-indigo-ink focus:text-ivory focus:px-4 focus:py-2 focus:rounded-sm2 font-mono text-xs tracking-widest uppercase"
       >
         Skip to content
       </a>
       <motion.header
+        ref={headerRef}
         className={`fixed top-0 inset-x-0 z-[90] transition-[background-color,border-color,box-shadow] duration-500 ${shell}`}
         initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -69,7 +133,7 @@ export default function Nav() {
             data-cursor="link"
             className={`group flex items-baseline gap-2 font-display font-bold tracking-tighter2 text-lg ${darkUI ? 'text-ivory' : 'text-ink'}`}
           >
-            <span className="grid place-items-center w-7 h-7 rounded-sm2 bg-indigo text-ivory text-[11px] font-mono tracking-normal transition-transform duration-500 group-hover:rotate-[10deg] group-hover:scale-105">
+            <span className="grid place-items-center w-7 h-7 rounded-sm2 bg-indigo-ink text-ivory text-[11px] font-mono tracking-normal transition-transform duration-500 group-hover:rotate-[10deg] group-hover:scale-105">
               {profile.initials}
             </span>
             <span className="hidden sm:inline">
@@ -105,6 +169,7 @@ export default function Nav() {
               </a>
             </Magnetic>
             <button
+              ref={toggleRef}
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
@@ -125,6 +190,10 @@ export default function Nav() {
         {open && (
           <motion.div
             id="mobile-menu"
+            ref={overlayRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
             className="fixed inset-0 z-[85] bg-deep text-ivory dark-zone lg:hidden flex flex-col"
             initial={{ clipPath: 'inset(0 0 100% 0)' }}
             animate={{ clipPath: 'inset(0 0 0% 0)' }}
@@ -164,7 +233,7 @@ export default function Nav() {
               <a className="underline-slide" href={profile.social.github} target="_blank" rel="noreferrer">GitHub</a>
               <a className="underline-slide" href={profile.social.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
               <a className="underline-slide" href={profile.social.instagram} target="_blank" rel="noreferrer">Instagram</a>
-              <a className="underline-slide text-lime" href={`mailto:${profile.email}`}>{profile.email}</a>
+              <Link className="underline-slide text-lime" to="/contact">Get in touch</Link>
             </motion.div>
           </motion.div>
         )}

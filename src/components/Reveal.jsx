@@ -25,8 +25,12 @@ export function MaskLines({ lines, className = '', lineClassName = '', as = 'div
   )
 }
 
-/** Word-by-word reveal for key statements. */
-export function WordReveal({ text, className = '', stagger = 0.045, highlight = [] }) {
+/**
+ * Word-by-word reveal for key statements. Highlighted words keep the brand
+ * violet by default; callers on light grounds pass `text-indigo-ink` and on
+ * dark grounds `text-indigo-soft` so the words always clear AA contrast.
+ */
+export function WordReveal({ text, className = '', stagger = 0.045, highlight = [], highlightClass = 'text-indigo' }) {
   const words = text.split(' ')
   return (
     <motion.p
@@ -43,7 +47,7 @@ export function WordReveal({ text, className = '', stagger = 0.045, highlight = 
             hidden: { opacity: 0, y: 14, filter: 'blur(4px)' },
             show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: EASE } },
           }}
-          className={`inline-block mr-[0.28em] ${highlight.includes(w.replace(/[.,—]/g, '')) ? 'text-indigo' : ''}`}
+          className={`inline-block mr-[0.28em] ${highlight.includes(w.replace(/[.,—]/g, '')) ? highlightClass : ''}`}
         >
           {w}
         </motion.span>
@@ -82,7 +86,7 @@ export function Stagger({ children, className = '', stagger = 0.08, delay = 0 })
   )
 }
 
-export function StaggerItem({ children, className = '', y = 24 }) {
+export function StaggerItem({ children, className = '' }) {
   return (
     <motion.div variants={fadeUpChild} className={className}>
       {children}

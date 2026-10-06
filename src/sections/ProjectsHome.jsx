@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useInView } from 'motion/react'
-import { Github, ArrowRight, ArrowUpRight, ExternalLink } from 'lucide-react'
+import { Github, ArrowRight, ArrowUpRight } from 'lucide-react'
 import Section, { container, sectionPadding } from '../components/Section'
 import SectionHead from '../components/SectionHead'
-import { Fade, MaskLines, Parallax, ScaleIn } from '../components/Reveal'
+import { Fade, Parallax, ScaleIn } from '../components/Reveal'
 import Magnetic from '../components/Magnetic'
+import ProjectImage from '../components/ProjectImage'
 import { projects } from '../data/projects'
+import { spellNumber, capitalize } from '../lib/format'
 import { EASE } from '../lib/motion'
-
-const FRAME_LABELS = ['hero & narrative', 'course finder', 'course rails', 'ai curriculum', 'community', 'reviews', 'press & footer']
 
 function FeaturedStory({ project }) {
   const [frame, setFrame] = useState(0)
@@ -25,35 +25,46 @@ function FeaturedStory({ project }) {
       <div className="lg:col-span-6">
         <div className="lg:sticky lg:top-24">
           <ScaleIn>
-            <div className="rounded-md2 overflow-hidden bg-paper border border-ink/10 shadow-panel" data-cursor="project" data-cursor-label="OPEN CASE">
+            <Link
+              to={`/projects/${project.slug}`}
+              data-cursor="project"
+              data-cursor-label="OPEN CASE"
+              aria-label={`Open the ${project.title} case study`}
+              className="block rounded-md2 overflow-hidden bg-paper border border-ink/10 shadow-panel"
+            >
               <div className="flex items-center gap-2 px-4 py-3 border-b border-ink/10 bg-paper">
                 <span className="w-2.5 h-2.5 rounded-full bg-coral" aria-hidden="true" />
                 <span className="w-2.5 h-2.5 rounded-full bg-lime" aria-hidden="true" />
                 <span className="w-2.5 h-2.5 rounded-full bg-cyan" aria-hidden="true" />
                 <span className="ml-3 truncate font-mono text-[10px] tracking-[0.14em] uppercase text-muted">
-                  localhost — coding-ninjas · react 19 · vite 8
+                  localhost — {project.slug} · {project.tech.slice(0, 2).join(' · ').toLowerCase()}
                 </span>
               </div>
-              <div className="relative aspect-[16/10] bg-ink">
+              {/* 16/9 (T30): the Coding Ninjas screenshots are 1264x712 ≈ 16/9, so the
+                  featured frames now sit uncropped instead of losing ~10% off the sides
+                  to a 16/10 box. */}
+              <div className="relative aspect-video bg-ink">
                 <AnimatePresence mode="popLayout">
-                  <motion.img
+                  <motion.div
                     key={frame}
-                    src={project.gallery[frame].src}
-                    alt={project.gallery[frame].alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 w-full h-full object-cover object-top"
+                    className="absolute inset-0"
                     initial={{ opacity: 0, scale: 1.06 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.6, ease: EASE }}
-                  />
+                  >
+                    <ProjectImage
+                      item={project.gallery[frame]}
+                      sizes="(min-width: 1024px) 560px, 92vw"
+                      className="absolute inset-0 w-full h-full object-cover object-top"
+                    />
+                  </motion.div>
                 </AnimatePresence>
                 <span className="absolute bottom-3 left-3 rounded-full bg-ink/80 backdrop-blur px-3 py-1 font-mono text-[10px] tracking-[0.16em] uppercase text-cyan">
-                  {String(frame + 1).padStart(2, '0')} / {FRAME_LABELS[frame]}
+                  {String(frame + 1).padStart(2, '0')} / {project.gallery[frame]?.label ?? `frame ${frame + 1}`}
                 </span>
               </div>
-            </div>
+            </Link>
           </ScaleIn>
           {/* frame progress ticks */}
           <div className="mt-4 flex gap-1.5" aria-hidden="true">
@@ -75,14 +86,14 @@ function FeaturedStory({ project }) {
             body: (
               <>
                 <p className="text-muted leading-relaxed">{project.summary}</p>
-                <span className="mt-5 inline-block rounded-full bg-indigo/10 border border-indigo/30 px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase text-indigo">
+                <span className="mt-5 inline-block rounded-full bg-indigo/10 border border-indigo/30 px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase text-indigo-ink">
                   {project.label} — unofficial study project
                 </span>
               </>
             ),
           },
           {
-            head: '02 — Fifteen sections rebuilt',
+            head: `02 — ${capitalize(spellNumber(project.sections.length))} sections rebuilt`,
             body: (
               <>
                 <p className="text-muted leading-relaxed">
@@ -91,7 +102,7 @@ function FeaturedStory({ project }) {
                 <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1.5 font-mono text-[12px] text-ink/80">
                   {project.sections.map((s, i) => (
                     <li key={s} className="flex items-baseline gap-2 border-b border-ink/10 py-1">
-                      <span className="text-indigo">{String(i + 1).padStart(2, '0')}</span> {s}
+                      <span className="text-indigo-ink">{String(i + 1).padStart(2, '0')}</span> {s}
                     </li>
                   ))}
                 </ul>
@@ -117,7 +128,7 @@ function FeaturedStory({ project }) {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted/80">
+                <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted">
                   no affiliation with or endorsement by Coding Ninjas
                 </p>
               </>
@@ -127,18 +138,26 @@ function FeaturedStory({ project }) {
             head: '04 — Explore it',
             body: (
               <div className="flex flex-wrap items-center gap-4">
-                <Magnetic strength={0.25} max={7}>
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    data-cursor="button"
-                    className="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo"
-                  >
-                    <Github size={16} aria-hidden="true" /> View on GitHub
-                    <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
-                  </a>
-                </Magnetic>
+                {/* T10: never render href={null} — projects without a public repo get a
+                    plain, non-interactive "not published" badge instead of a dead button. */}
+                {project.github ? (
+                  <Magnetic strength={0.25} max={7}>
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      data-cursor="button"
+                      className="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo-ink"
+                    >
+                      <Github size={16} aria-hidden="true" /> View on GitHub
+                      <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+                    </a>
+                  </Magnetic>
+                ) : (
+                  <span className="rounded-full border border-dashed border-ink/30 px-5 py-3 font-mono text-[11px] tracking-[0.14em] uppercase text-muted">
+                    Source not published yet
+                  </span>
+                )}
                 <Link to={`/projects/${project.slug}`} data-cursor="link" className="underline-slide font-body font-semibold text-sm py-3.5">
                   Read the case study →
                 </Link>
@@ -153,7 +172,7 @@ function FeaturedStory({ project }) {
           >
             <BlockObserver onActive={() => setFrame(project.scrollFrames[i] ?? 0)} />
             <Fade y={20}>
-              <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-indigo">{block.head}</p>
+              <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-indigo-ink">{block.head}</p>
               <div className="mt-4 text-[15px]">{block.body}</div>
             </Fade>
           </div>
@@ -202,17 +221,15 @@ export default function ProjectsHome({ bare = false }) {
               data-cursor="project"
               className="group relative block overflow-hidden rounded-lg2 bg-ink text-ivory"
             >
-              <motion.img
-                src={secondary.gallery[0].src}
-                alt={secondary.gallery[0].alt}
-                loading="lazy"
-                decoding="async"
+              <ProjectImage
+                item={secondary.gallery[0]}
+                sizes="100vw"
                 className="absolute inset-0 w-full h-full object-cover opacity-45 transition-transform duration-[1.2s] ease-out group-hover:scale-[1.05]"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" aria-hidden="true" />
               <div className="relative p-[clamp(1.75rem,4vw,3.5rem)] min-h-[380px] flex flex-col justify-end">
                 <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-cyan">
-                  Project 02 — {secondary.tech.join(' · ')}
+                  Project {String(projects.indexOf(secondary) + 1).padStart(2, '0')} — {secondary.tech.join(' · ')}
                 </p>
                 <h3 className="mt-3 font-display font-bold tracking-tighter2 text-[clamp(1.9rem,4.4vw,3.4rem)]">
                   {secondary.title}

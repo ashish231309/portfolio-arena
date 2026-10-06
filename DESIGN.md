@@ -16,19 +16,21 @@ Recurring motif: **orbital rings + signal lines + mono coordinate/index labels**
 | `ink` | `#10162B` | Primary text on light; marquee band; mosaic tiles |
 | `deep` | `#121A2D` | Dark section ground (skills, certifications) |
 | `deeper` | `#0B1120` | Contact + footer ground; darkest contrast |
-| `indigo` | `#6C5CE7` | Brand primary — headlines accents, solid CTAs, brand marks |
-| `cobalt` | `#3B82F6` | Secondary brand — links on dark, gradient partner |
+| `indigo` | `#6C5CE7` | Brand primary — large headlines, glows, brand marks |
+| `indigo-ink` | `#5A4BD4` | Indigo *on light* — solid CTA fill and small accent text (5.54:1 on ivory) |
+| `cobalt` | `#3B82F6` | Secondary brand — accents on dark, gradient partner |
+| `cobalt-ink` | `#1D4ED8` | Cobalt *on light* — small accent text (5.99:1 on ivory) |
 | `cyan` | `#27D3F2` | Interactive state — hover, cursor ring, focus, projects accent |
 | `coral` | `#FF6B6B` | Warm spark — experience accent, marquee asterisks, one mosaic tile |
 | `lime` | `#C7F36B` | Rare high-impact — contact CTA, achievements accent, status dot |
-| `muted` | `#667085` | Secondary text on light |
+| `muted` | `#5B6474` | Secondary text on light (5.34:1 ivory · 5.06:1 tint · 5.82:1 paper) |
 | `fog` | `#9AA3B5` | Secondary text on dark |
 
 Rules
 - Black/white never dominate: ivory ≠ white, ink ≠ pure black.
 - One accent per section maximum; accent = that section's ambient-glow color and index color.
 - Section rhythm (home): ivory → ink band (marquee) → ivory → **deep** → ivory → ivory+tint → **deep** → ivory → **deeper** → deeper.
-- Selection color: indigo bg / ivory text. Focus ring: 2px cyan, offset 3px, always visible.
+- Selection color: indigo bg / ivory text. Focus ring: 2px ink outline on light grounds, 2px cyan on dark zones, offset 3px, never suppressed.
 
 ## 2. Typography
 - **Display:** Space Grotesk (variable) — headlines, project titles, oversized type. Weights 500–700, tracking `-0.045em` at display sizes.
@@ -49,8 +51,8 @@ Rules
 - Shadows sparingly: `shadow-panel` only for browser mockup & certificate hover; depth mostly from overlap, color fields and motion.
 
 ## 5. Components
-- **Buttons:** solid (indigo bg / ivory text), outline (1px ink/25), ghost-underline (text + animated underline), lime solid on dark contact. All magnetic on desktop (`Magnetic`, ±6px). Hover: bg shift + arrow slide 4px; active: scale .98.
-- **Tags/chips:** mono 11px, 1px border, pill; dashed variant = "learning / simulation".
+- **Buttons:** solid (`indigo-ink` bg / ivory text — 5.54:1), outline (1px ink/25), ghost-underline (text + animated underline), lime solid on dark contact. All magnetic on desktop (`Magnetic`, ±6px). Hover: one step deeper (`#4B3FC2`) + arrow slide 4px; active: scale .98.
+- **Tags/chips:** mono 11px, 1px border, pill; dashed variant = "learning / simulation". Solid chips are claimed areas (e.g. the `Full Stack Development` group) — never render that group dashed.
 - **Cards:** only where semantic — certificate tiles (rail), mosaic tiles, form panel. Projects use immersive panels, experience uses timeline entries, skills use typographic lists.
 - **Section head:** mono index `§0n` + accent dot + thin rule + masked display title + optional right-side mono note.
 - **Browser mockup:** paper chrome bar, 3 dots, mono url; screenshots inside; `shadow-panel`.
@@ -64,13 +66,13 @@ Rules
 
 ## 7. Cursor system (fine pointers only)
 - Dot 6px ink (ivory on dark via mix-blend-difference), ring 34px 1.5px border trailing with spring lag, 4 ghost afterimages with progressively softer springs (trail).
-- States via `data-cursor`: `link` (ring 44px), `button`/magnetic (ring 44px + fill tint), `project` (72px disc, label "VIEW"), `cert` (disc "OPEN"), `contact` (disc "LET'S TALK"), `drag` (disc "SCROLL →" on rails).
+- States via `data-cursor`: `link` (ring 44px), `button`/magnetic (ring 44px + fill tint), `project` (72px disc, label "VIEW"), `cert` (disc "OPEN"), `contact` (disc "LET'S TALK"), `drag` (disc "SWIPE →" on rails).
 - Hidden on touch/coarse pointer and when `prefers-reduced-motion`; native cursor restored for text inputs.
 - Ambient glow: fixed 520px blurred radial @ 8–12% opacity following cursor with heavy lag; color = current section accent (animated CSS var).
 
 ## 8. Accessibility
 - Semantic landmarks, single h1, logical heading order; skip-link; visible focus; all interactions keyboard-reachable; cursor never required.
-- Contrast: ink on ivory 15.9:1; ivory on deep 14.6:1; muted on ivory 5.0:1; lime on deeper 12.4:1; indigo on ivory 4.6:1 (large type only).
+- Contrast (measured, WCAG AA): ink on ivory 16.03:1; ivory on deep 15.51:1; muted on ivory 5.34:1; lime on deeper 14.76:1; ivory on the `indigo-ink` CTA 5.54:1; cyan on deep 9.65:1. Brand indigo `#6C5CE7` is 4.35:1 on ivory, so it stays on large display type and dark grounds; small indigo text on light uses `indigo-ink`, small cobalt text on light uses `cobalt-ink`.
 - `prefers-reduced-motion`: no cursor/trail/magnetic/lenis/parallax; reveals become 200ms opacity; marquee & orbit pause; content identical.
 - Form: labels, `aria-invalid`, inline error text, honeypot spam field, live status message.
 
@@ -79,4 +81,4 @@ Rules
 - 768: two-column where meaningful; 1024+: full choreography; 1440+: container capped, type scales via clamp only.
 
 ## 10. Performance
-- MotionValues/springs + transform/opacity only; pointer events write to refs/motion values (no React state per move); images lazy (`loading="lazy"`, `decoding="async"`); single blur layer; Lenis rAF paused when tab hidden; no video.
+- MotionValues/springs + transform/opacity only; pointer events write to refs/motion values (no React state per move); images lazy (`loading="lazy"`, `decoding="async"`); single blur layer; Lenis stopped/started on `visibilitychange` (rAF loop keeps ticking but the engine is idle); no video.

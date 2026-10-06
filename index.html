@@ -18,15 +18,34 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Ashish Kumar — Computer Science Student" />
     <meta name="twitter:description" content="Building with Software, Web & Generative AI. Projects, experience and certifications." />
+    <meta name="twitter:image" content="__SITE_ORIGIN__/og-cover.png" />
+    <meta name="twitter:image:alt" content="Ashish Kumar — Computer Science student building with Software, Web & Generative AI" />
     <meta name="theme-color" content="#F6F2E8" />
+    <!-- Absolute URLs come from one value — VITE_SITE_ORIGIN, set in .env or in
+         Vercel's environment variables. vite.config.js substitutes it here and in
+         robots.txt / sitemap.xml at build time, so the four cannot drift apart. -->
+    <link rel="canonical" href="__SITE_ORIGIN__/" />
+    <meta property="og:url" content="__SITE_ORIGIN__/" />
+    <meta property="og:image" content="__SITE_ORIGIN__/og-cover.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Ashish Kumar — Computer Science student building with Software, Web & Generative AI" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <!-- Above-the-fold faces: display (h1/hero) + body. Mono loads with the rest. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/space-grotesk-latin-wght-normal.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/manrope-latin-wght-normal.woff2" crossorigin />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Ashish Kumar",
         "jobTitle": "Computer Science Student",
-        "email": "mailto:ashish1492a@gmail.com",
+        "url": "__SITE_ORIGIN__/",
+        "image": "__SITE_ORIGIN__/og-cover.png",
         "address": { "@type": "PostalAddress", "addressLocality": "Kanpur", "addressRegion": "Uttar Pradesh", "addressCountry": "IN" },
         "sameAs": [
           "https://github.com/ashish1492a",

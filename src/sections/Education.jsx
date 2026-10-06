@@ -1,11 +1,24 @@
 import { motion, useInView } from 'motion/react'
 import { useRef } from 'react'
 import { GraduationCap, School } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
-import { Fade, Stagger, StaggerItem } from '../components/Reveal'
+import { Fade } from '../components/Reveal'
 import { education, } from '../data/education'
 import { coursework } from '../data/skills'
+import { spellNumber, capitalize } from '../lib/format'
+
+// Derived from the data so the education headline can never go stale: the
+// duration comes from the degree dates, the subject count from `coursework`.
+// Spelled out to keep the editorial voice ("Four years, ten subjects") — the
+// rendered words are identical to the old hardcoded line.
+const degreeStart = Number(education.degree.started?.match(/\d{4}/)?.[0])
+const degreeEnd = Number(education.degree.graduation?.match(/\d{4}/)?.[0])
+const degreeYears = Number.isFinite(degreeStart) && Number.isFinite(degreeEnd) && degreeEnd > degreeStart ? degreeEnd - degreeStart : null
+const educationHeadline = [
+  `${degreeYears ? capitalize(spellNumber(degreeYears)) : 'Four'} years, ${spellNumber(coursework.length)} subjects,`,
+  'one direction.',
+]
 
 function DegreeProgress() {
   const ref = useRef(null)
@@ -38,7 +51,7 @@ function DegreeProgress() {
       </div>
       <div className="mt-3 flex justify-between font-mono text-[10px] tracking-[0.16em] text-muted">
         {years.map((y, i) => (
-          <span key={y} className={i === 3 ? 'text-indigo font-bold' : ''}>
+          <span key={y} className={i === 3 ? 'text-indigo-ink font-bold' : ''}>
             {y}
           </span>
         ))}
@@ -48,11 +61,18 @@ function DegreeProgress() {
 }
 
 export default function Education({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+  // Bare pages own the only h1, so entry titles take the h2 slot (T26).
+  const H = bare ? 'h2' : 'h3'
+
   return (
-    <Section id="education" bg="tint" accent="indigo" className={sectionPadding}>
+    <Wrapper id="education" bg="tint" accent="indigo" className={sectionPadding}>
       <div className={container}>
         {!bare && (
-          <SectionHead index="05" title={['Four years, ten subjects,', 'one direction.']} note="Education" accent="indigo" id="education-title" />
+          <SectionHead index="05" title={educationHeadline} note="Education" accent="indigo" id="education-title" />
         )}
         <div className="grid lg:grid-cols-12 gap-10">
           <div className="lg:col-span-7">
@@ -63,12 +83,12 @@ export default function Education({ bare = false }) {
                   {education.degree.started} — {education.degree.graduation}
                   <span className="rounded-full bg-lime px-3 py-0.5 text-[10px] tracking-[0.14em] text-ink">{education.degree.current}</span>
                 </div>
-                <h3 className="mt-4 font-display font-bold tracking-tighter2 text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">
+                <H className="mt-4 font-display font-bold tracking-tighter2 text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">
                   {education.degree.title}
-                </h3>
+                </H>
                 <p className="mt-2 font-body font-semibold text-ink/80">{education.degree.institute}</p>
                 <p className="mt-1 text-sm text-muted">{education.degree.university}</p>
-                <p className="mt-4 font-mono text-[12px] tracking-[0.14em] text-indigo">{education.degree.cgpa}</p>
+                <p className="mt-4 font-mono text-[12px] tracking-[0.14em] text-indigo-ink">{education.degree.cgpa}</p>
                 <DegreeProgress />
               </article>
             </Fade>
@@ -86,7 +106,7 @@ export default function Education({ bare = false }) {
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted/80">
+              <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted">
                 academic coursework — foundations, not claimed expertise
               </p>
             </Fade>
@@ -114,6 +134,6 @@ export default function Education({ bare = false }) {
           ))}
         </div>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

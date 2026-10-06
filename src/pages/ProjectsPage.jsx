@@ -2,18 +2,25 @@ import { Link } from 'react-router-dom'
 import { ArrowUpRight, Github } from 'lucide-react'
 import Section from '../components/Section'
 import PageIntro from '../components/PageIntro'
+import ProjectImage from '../components/ProjectImage'
 import { Fade, ScaleIn } from '../components/Reveal'
 import { projects } from '../data/projects'
+import { spellNumber, capitalize } from '../lib/format'
 import { usePageMeta } from '../hooks/usePageMeta'
 
 export default function ProjectsPage() {
-  usePageMeta('Projects', 'Frontend website recreations by Ashish Kumar: Coding Ninjas (React 19 + Vite + Tailwind) and BMW (HTML/CSS/JS).')
+  usePageMeta(
+    'Projects',
+    `Frontend website recreations by Ashish Kumar: ${projects
+      .map((p) => `${p.shortTitle} (${p.tech.join(' + ')})`)
+      .join(' and ')}.`,
+  )
   return (
     <Section bg="ivory" accent="indigo" className="pb-[clamp(5rem,10vh,8rem)]">
       <PageIntro
         index="03"
         crumb="/projects"
-        title={['Two recreations,', 'one obsession:']}
+        title={[`${capitalize(spellNumber(projects.length))} ${projects.length === 1 ? 'recreation' : 'recreations'},`, 'one obsession:']}
         lede="Studying real production sites by rebuilding them — honestly labelled, fully owned, no fake demos."
       />
       <div className="mx-auto w-full max-w-[1200px] px-[clamp(1.25rem,4vw,3rem)] space-y-8">
@@ -26,11 +33,9 @@ export default function ProjectsPage() {
             >
               <div className="md:col-span-7 relative overflow-hidden bg-ink">
                 <ScaleIn from={1}>
-                  <img
-                    src={p.gallery[0].src}
-                    alt={p.gallery[0].alt}
-                    loading="lazy"
-                    decoding="async"
+                  <ProjectImage
+                    item={p.gallery[0]}
+                    sizes="(min-width: 768px) 58vw, 100vw"
                     className="w-full h-full object-cover object-top transition-transform duration-[1.1s] group-hover:scale-[1.04]"
                   />
                 </ScaleIn>
@@ -54,7 +59,7 @@ export default function ProjectsPage() {
                   ))}
                 </ul>
                 <div className="mt-auto pt-6 flex items-center gap-4">
-                  <span className="inline-flex items-center gap-1.5 font-body font-bold text-sm text-indigo">
+                  <span className="inline-flex items-center gap-1.5 font-body font-bold text-sm text-indigo-ink">
                     Case study <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                   </span>
                   {p.github && (

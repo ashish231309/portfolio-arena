@@ -26,6 +26,40 @@ npm run build    # production build → dist/
 npm run preview  # preview the build
 ```
 
+### Quality checks
+
+```bash
+npm run lint        # ESLint (flat config + react/react-hooks)
+npm run format      # Prettier — use on files you touched, not the whole repo at once
+npm run check:meta  # confirm no file carries embedded metadata
+npm run qa          # screenshot + overflow/console pass (needs `npm run dev` running)
+npm test            # Playwright smoke tests (builds and serves dist/ itself)
+```
+
+- **`npm run qa`** drives a real browser over the home page, both project case studies, the
+  credential rail and six viewport widths. Screenshots land in `qa/screens/` (gitignored) and it
+  prints the horizontal-overflow and console-error result per shot, exiting non-zero if anything
+  crosses the viewport edge or logs an error. `QA_BASE=http://localhost:4173 npm run qa` points it at
+  a `npm run preview` build instead.
+- **`npm test`** runs the smoke suite in [`tests/smoke.spec.js`](./tests/smoke.spec.js): every route
+  renders one `h1` with no console errors, no horizontal overflow at 320/375/768/1440, each project
+  case study loads only its own `/projects/<slug>/` images (the screenshot-mix-up regression guard),
+  and both 404 surfaces render branded. The Chromium build is required — install it once:
+
+```bash
+npx playwright install chromium
+npm test
+```
+
+  `QA_BASE=http://localhost:5173 npm test` runs the suite against your own dev server instead of the
+  built preview.
+
+For local/production SEO tags, copy `.env.example` to `.env` and set `VITE_SITE_ORIGIN`
+to the deployed origin. Without it, every absolute URL (canonical, `og:image`,
+`robots.txt`, `sitemap.xml`) points at `https://REPLACE-WITH-YOUR-DOMAIN` and the build
+warns. `robots.txt` and `sitemap.xml` are generated from that value plus
+`src/data/projects.js`, so they can never drift out of sync with the site.
+
 ## Routes
 
 | Route | Content |
@@ -40,6 +74,41 @@ npm run preview  # preview the build
 | `/certifications` | Public digital credential rail |
 | `/achievements` | NCC, sport, coordination activities |
 | `/contact` | Contact form (FormSubmit), email, socials |
+
+Any other URL is handled by the in-app 404 (`src/pages/NotFound.jsx`), described below.
+
+## Failure surfaces (404s & errors)
+
+There are three of them, and they deliberately share one design language: ink `#10162B` background,
+coral mono micro-label, a “never shipped” headline, and a lime **Back to home** button.
+
+| Surface | File | When it appears |
+|---|---|---|
+| In-app 404 | `src/pages/NotFound.jsx` (`path="*"`) | Any unknown URL once the app has loaded — e.g. `/nope`, `/projects/typo` |
+| Static 404 | `public/404.html` | Served by the host for a missing URL when the SPA rewrite doesn't apply, and reachable directly at `/404.html`. Self-contained: inline CSS, no scripts, no external requests, so it still renders if JavaScript never loads |
+| Error fallback | `src/components/ErrorBoundary.jsx` | A runtime render error in any route — keeps the navbar and footer, offers *Reload the page* / *Back to home* |
+
+Deep links (e.g. `/projects/bmw` opened directly, or refreshed) work because `vercel.json` rewrites
+every path to `/index.html`, and the app's router then resolves the route client-side:
+
+```json
+{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
+```
+
+Real files still win over the rewrite, so `/404.html`, `/resume.pdf`, `/projects/**` and
+`/certificates/**` are served as-is.
+
+**Test these locally** (the dev server already falls back to `index.html`, so use the real build):
+
+```bash
+npm run build && npm run preview     # http://localhost:4173
+```
+
+- `/projects/bmw` → the BMW case study must load (not a 404) — proves the deep link works.
+- `/nope` → the branded in-app 404 (“This page never shipped.”).
+- `/404.html` → the static 404 on its own; disable JavaScript and reload — it is still readable.
+
+`npm run check:meta` (see *Where assets live*) is unrelated but cheap; run it after touching assets.
 
 ## Where personal data lives
 
@@ -59,17 +128,26 @@ src/data/achievements.js    NCC / sport / coordination + traits
 
 ```
 public/resume.pdf                       résumé (Download Resume CTA)
-public/projects/coding-ninjas/cn-*.png  featured project screenshots
-public/projects/bmw/bmw-*.jpeg          BMW recreation screenshots
+public/projects/<slug>/                 screenshots for that project — nothing else
 public/certificates/*.pdf               PUBLIC digital certificates only
 public/favicon.svg                      brand mark
 ```
+
+**Naming pattern:** `<project-slug>-NN-<content>.<ext>` — e.g. `coding-ninjas-03-course-rails.jpeg`,
+`bmw-01-hero-5-series.png`.
+
+- `NN` is a two-digit number that sets the order (01, 02, 03 …).
+- `<content>` names the section the screenshot shows.
+- One folder per project: `public/projects/bmw/` holds **only** BMW files,
+  `public/projects/coding-ninjas/` holds **only** Coding Ninjas files.
+- **One `gallery` array per project, in page order**, and every screenshot on disk must be
+  referenced exactly once. `alt` text must describe what is actually visible in that image.
 
 ⚠️ **Physical certificates (NCC B/C, school & college sport) are intentionally NOT in `public/`.** They are represented as text under Activities only. Do not add their images/files to `public/`.
 
 ## Contact form
 
-Uses [FormSubmit](https://formsubmit.co) AJAX endpoint (`src/sections/Contact.jsx`) — no secrets in frontend code, honeypot spam protection, inline validation, loading/success/error states. The first submission sends an activation email to the inbox owner once.
+Posts to a [FormSubmit](https://formsubmit.co) AJAX endpoint (`src/sections/Contact.jsx`) using a FormSubmit **alias** — the alias routes to the owner's inbox without the mailbox address appearing anywhere in the repository or in the built bundle. Honeypot spam protection, inline validation, loading/success/error states, and a 10 s request cap. Override the destination with `VITE_CONTACT_ENDPOINT` (see `.env.example`).
 
 ## Updating content — quick guide
 
@@ -77,9 +155,15 @@ See [`UPDATE_GUIDE.md`](./UPDATE_GUIDE.md).
 
 ## Honesty policy baked into the content
 
+- **Full Stack Development is presented as an expertise area** — the `Full Stack Development`
+  group in `src/data/skills.js`, built only from technologies the site already lists (interface,
+  server-side & data, version control). No backend framework is named, because none has been
+  confirmed.
 - Recreations are labelled **“Website Recreation”** (no affiliation/endorsement implied).
 - Forage entries are labelled **Virtual Job Simulation — not employment**.
-- Learning topics (Docker, Linux, deployment, APIs) are shown as *exploring*, never as production expertise.
+- Infrastructure topics still being learned (Docker, Linux, deployment, APIs) stay under
+  *Currently exploring* and are labelled “not yet claimed as expertise” — that framing applies to
+  those chips, not to Full Stack Development.
 - No invented metrics, users, testimonials, deployments or repository links.
 
 ## License

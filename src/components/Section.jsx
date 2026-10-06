@@ -1,4 +1,4 @@
-import { useSectionSignal, useSite } from '../lib/site'
+import { useSectionSignal } from '../lib/site'
 import AmbientGlow from './AmbientGlow'
 import { ACCENTS } from '../lib/motion'
 
@@ -15,6 +15,13 @@ const BG = {
  * Section shell: background field, tone/accent signalling for nav+cursor,
  * local ambient glow and optional grid/noise texture.
  */
+export function toneOf(bg) {
+  return ['ink', 'deep', 'deeper'].includes(bg) ? 'dark' : 'light'
+}
+
+/** Background/text classes for a surface — shared by Section and SectionSurface. */
+export const surfaceClass = (bg) => BG[bg] || BG.ivory
+
 export default function Section({
   id,
   bg = 'ivory',
@@ -22,10 +29,11 @@ export default function Section({
   glow = true,
   grid = false,
   className = '',
+  intro,
   children,
   labelledBy,
 }) {
-  const tone = ['ink', 'deep', 'deeper'].includes(bg) ? 'dark' : 'light'
+  const tone = toneOf(bg)
   const ref = useSectionSignal(tone, ACCENTS[accent] || accent)
 
   return (
@@ -33,7 +41,7 @@ export default function Section({
       id={id}
       ref={ref}
       aria-labelledby={labelledBy}
-      className={`relative ${BG[bg] || BG.ivory} ${className}`}
+      className={`relative ${surfaceClass(bg)} ${className}`}
     >
       {grid && (
         <div
@@ -42,8 +50,28 @@ export default function Section({
         />
       )}
       {glow && <AmbientGlow accent={ACCENTS[accent] || accent} dark={tone === 'dark'} />}
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-10">
+        {intro}
+        {children}
+      </div>
     </section>
+  )
+}
+
+/**
+ * A background field that is NOT its own <section> — used when a page owns a
+ * single <Section> and a section component only contributes a coloured band
+ * (e.g. the dark contact form inside the ivory /contact page). Keeps the tone
+ * signalling and the background, but adds no second section and no second glow.
+ */
+export function SectionSurface({ bg = 'ivory', accent = 'indigo', className = '', children, id }) {
+  const tone = toneOf(bg)
+  const ref = useSectionSignal(tone, ACCENTS[accent] || accent)
+
+  return (
+    <div ref={ref} id={id} data-surface={bg} className={`relative ${surfaceClass(bg)} ${className}`}>
+      <div className="relative z-10">{children}</div>
+    </div>
   )
 }
 

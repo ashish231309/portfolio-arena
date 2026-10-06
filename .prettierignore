@@ -1,0 +1,14 @@
+# Build output and dependencies
+dist/
+node_modules/
+
+# Generated / binary assets — not source, never reformat
+public/
+audit/
+package-lock.json
+
+# QA artefacts
+qa/screens/
+qa/*.png
+playwright-report/
+test-results/

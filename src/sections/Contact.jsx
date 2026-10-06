@@ -1,14 +1,24 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowUpRight, Loader2, CheckCircle2, AlertCircle, Mail, Send } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import { ArrowUpRight, Loader2, CheckCircle2, AlertCircle, Send } from 'lucide-react'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade, WordReveal } from '../components/Reveal'
 import Magnetic from '../components/Magnetic'
 import { profile } from '../data/profile'
 import { EASE } from '../lib/motion'
 
-const FORM_ENDPOINT = 'https://formsubmit.co/ajax/ashish1492a@gmail.com'
+// T20 — the recipient address no longer exists in this bundle. Messages go to a
+// FormSubmit *alias* (the random string FormSubmit issues once the address is
+// confirmed): the alias routes to the same inbox, but nothing in the served files
+// names the mailbox, so address-harvesting bots come away empty-handed.
+//
+// Override it per environment with VITE_CONTACT_ENDPOINT (see .env.example) — e.g.
+// to point a staging build somewhere else without touching this file.
+const FORM_ALIAS = 'dbcb9c89ab8b18aaa83b8792882d8a96'
+const FORM_ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT || `https://formsubmit.co/ajax/${FORM_ALIAS}`
+// A2: never leave the button stuck on "Sending…" — 10 s cap on the request.
+const FORM_TIMEOUT_MS = 10000
 
 const initialForm = { name: '', email: '', subject: '', message: '', honey: '' }
 
@@ -36,7 +46,45 @@ function Field({ id, label, error, children }) {
 }
 
 const inputCls =
-  'mt-2 w-full bg-transparent border-b border-ivory/20 py-2.5 text-[15px] text-ivory placeholder:text-fog/50 focus:border-cyan focus:outline-none transition-colors'
+  'mt-2 w-full bg-transparent border-b border-ivory/45 py-2.5 text-[15px] text-ivory placeholder:text-fog/80 focus:border-cyan transition-colors'
+
+/**
+ * POST the form with a hard timeout (A2). The abort is mirrored by a race so
+ * the promise rejects at `timeoutMs` even if the request ignores `signal`.
+ */
+export async function sendForm(values, { endpoint = FORM_ENDPOINT, timeoutMs = FORM_TIMEOUT_MS } = {}) {
+  const controller = new AbortController()
+  let timer
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort()
+      reject(new Error(`form request timed out after ${timeoutMs}ms`))
+    }, timeoutMs)
+  })
+  try {
+    const res = await Promise.race([
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          subject: values.subject,
+          message: values.message,
+          _subject: `Portfolio — ${values.subject}`,
+          _template: 'table',
+          _honey: values.honey,
+        }),
+        signal: controller.signal,
+      }),
+      timeout,
+    ])
+    if (!res.ok) throw new Error(`form service responded ${res.status}`)
+    return res
+  } finally {
+    clearTimeout(timer)
+  }
+}
 
 function ContactForm() {
   const [values, setValues] = useState(initialForm)
@@ -56,23 +104,12 @@ function ContactForm() {
     }
     setState('sending')
     try {
-      const res = await fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          subject: values.subject,
-          message: values.message,
-          _subject: `Portfolio — ${values.subject}`,
-          _template: 'table',
-          _honey: values.honey,
-        }),
-      })
-      if (!res.ok) throw new Error(`form service responded ${res.status}`)
+      await sendForm(values)
       setState('success')
       setValues(initialForm)
     } catch {
+      // timeout, abort, network failure or a non-2xx answer all land here:
+      // the button re-enables and the error copy points at the real address.
       setState('error')
     }
   }
@@ -178,7 +215,8 @@ function ContactForm() {
           )}
           {state === 'error' && (
             <span className="inline-flex items-center gap-2 text-coral">
-              <AlertCircle size={15} aria-hidden="true" /> Something broke — email me directly below.
+              <AlertCircle size={15} aria-hidden="true" /> Something broke on my end — try again, or{' '}
+              <strong className="font-semibold">reach me on LinkedIn or GitHub</strong> below.
             </span>
           )}
         </p>
@@ -188,6 +226,11 @@ function ContactForm() {
 }
 
 export default function Contact({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+
   const socials = [
     { label: 'GitHub', href: profile.social.github, handle: '@ashish1492a' },
     { label: 'LinkedIn', href: profile.social.linkedin, handle: 'ashish-kumar-52507641b' },
@@ -195,7 +238,7 @@ export default function Contact({ bare = false }) {
   ]
 
   return (
-    <Section id="contact" bg="deeper" accent="lime" className={`${sectionPadding} relative`}>
+    <Wrapper id="contact" bg="deeper" accent="lime" className={`${sectionPadding} relative`}>
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -bottom-6 left-0 right-0 text-center font-display font-bold tracking-mega text-[clamp(4rem,15vw,12rem)] text-ivory/[0.04] leading-none select-none"
@@ -212,18 +255,8 @@ export default function Contact({ bare = false }) {
               text="Open to internships, collaborations, study projects and good conversations about the web."
               className="font-display text-[clamp(1.25rem,2.2vw,1.7rem)] leading-snug tracking-tight text-ivory"
               highlight={['internships', 'collaborations', 'web.']}
+              highlightClass="text-indigo-soft"
             />
-            <Fade delay={0.2} y={16}>
-              <Magnetic strength={0.25} max={8}>
-                <a
-                  href={`mailto:${profile.email}`}
-                  data-cursor="contact"
-                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-lime px-7 py-4 font-mono text-[13px] tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-[#b8e356]"
-                >
-                  <Mail size={16} aria-hidden="true" /> {profile.email}
-                </a>
-              </Magnetic>
-            </Fade>
             <ul className="mt-10 divide-y divide-ivory/10 border-y border-ivory/10">
               {socials.map((s, i) => (
                 <motion.li key={s.label} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.5, ease: EASE }}>
@@ -245,6 +278,19 @@ export default function Contact({ bare = false }) {
                 </motion.li>
               ))}
             </ul>
+            {/* Sits *below* the social links on purpose: the label starts with
+                "Or", so it needs the channels above to be the alternative to. */}
+            <Fade delay={0.2} y={16}>
+              <Magnetic strength={0.25} max={8}>
+                <a
+                  href="#cf-name"
+                  data-cursor="contact"
+                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-lime px-7 py-4 font-mono text-[13px] tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-[#b8e356]"
+                >
+                  <Send size={16} aria-hidden="true" /> Or fill the form
+                </a>
+              </Magnetic>
+            </Fade>
           </div>
           <div className="lg:col-span-7">
             <Fade y={26} delay={0.1}>
@@ -253,6 +299,6 @@ export default function Contact({ bare = false }) {
           </div>
         </div>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

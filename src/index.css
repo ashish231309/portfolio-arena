@@ -18,11 +18,15 @@
   ::selection {
     @apply bg-indigo text-ivory;
   }
+  /* Focus ring: ink outline reads on every light ground (16.03:1 on ivory);
+     dark zones keep cyan (9.65:1 on deep). */
   :focus-visible {
-    @apply outline-none ring-2 ring-cyan ring-offset-2 ring-offset-ivory rounded-xs;
+    @apply outline-none rounded-xs;
+    outline: 2px solid #10162B;
+    outline-offset: 3px;
   }
   .dark-zone :focus-visible {
-    @apply ring-offset-deep;
+    outline-color: #27D3F2;
   }
   h1, h2, h3, h4 {
     @apply font-display;
