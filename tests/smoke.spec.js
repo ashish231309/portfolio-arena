@@ -117,6 +117,29 @@ test.describe('project detail pages show their own screenshots', () => {
   }
 })
 
+test.describe('navigation housekeeping', () => {
+  // Regression guard: the mobile menu stops Lenis while it is open, and Lenis
+  // ignores scrollTo() while stopped unless forced — so navigating from the menu
+  // used to keep the previous page's scroll offset (leave /about at the footer,
+  // open /certifications, and it started at the footer too).
+  test('opening a route from the hamburger menu starts at the top', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/about')
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+    await page.waitForTimeout(700)
+    const before = await page.evaluate(() => Math.round(window.scrollY))
+    expect(before, 'the test needs the page to actually be scrolled down first').toBeGreaterThan(400)
+
+    await page.getByRole('button', { name: 'Open menu' }).click()
+    await page.getByRole('link', { name: 'Certifications', exact: true }).click()
+    await page.waitForURL('**/certifications')
+    await page.waitForTimeout(1000)
+
+    const after = await page.evaluate(() => Math.round(window.scrollY))
+    expect(after, 'the new route must start at the top of the page').toBeLessThan(50)
+  })
+})
+
 test.describe('not-found pages', () => {
   test('unknown route renders the branded in-app 404', async ({ page }) => {
     const errors = collectErrors(page)

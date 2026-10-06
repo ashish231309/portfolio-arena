@@ -58,13 +58,25 @@ export function useLenis() {
 /**
  * Jump (or glide) back to the top of the page through the single scroll engine.
  * `{ immediate: true }` for route changes; no options for the smooth footer button.
+ *
+ * `force: true` on the route-change path is not optional: Lenis ignores
+ * `scrollTo` while the engine is stopped (`if ((this.isStopped || this.isLocked)
+ * && !force) return`), and the mobile menu stops it while it is open. Without
+ * this flag, navigating from the hamburger menu kept the previous page's scroll
+ * offset — e.g. leaving /about at the footer opened /certifications at the
+ * footer too. With it, the new route always starts at the top.
  */
 export function useScrollToTop() {
   const lenis = useLenis()
   return useCallback(
     ({ immediate = false } = {}) => {
       if (lenis) {
-        lenis.scrollTo(0, immediate ? { immediate: true } : {})
+        lenis.scrollTo(0, immediate ? { immediate: true, force: true } : {})
+        // Belt and braces for route changes: the menu also locks the body while
+        // it is open, so reset the native position too. Both target the same
+        // place, so there is nothing for the two to fight over — but a route can
+        // never inherit the previous page's offset.
+        if (immediate && typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
       } else if (typeof window !== 'undefined') {
         window.scrollTo({ top: 0, behavior: immediate ? 'auto' : 'smooth' })
       }

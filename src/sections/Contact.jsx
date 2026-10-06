@@ -257,17 +257,6 @@ export default function Contact({ bare = false }) {
               highlight={['internships', 'collaborations', 'web.']}
               highlightClass="text-indigo-soft"
             />
-            <Fade delay={0.2} y={16}>
-              <Magnetic strength={0.25} max={8}>
-                <a
-                  href="#cf-name"
-                  data-cursor="contact"
-                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-lime px-7 py-4 font-mono text-[13px] tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-[#b8e356]"
-                >
-                  <Send size={16} aria-hidden="true" /> Or fill the form
-                </a>
-              </Magnetic>
-            </Fade>
             <ul className="mt-10 divide-y divide-ivory/10 border-y border-ivory/10">
               {socials.map((s, i) => (
                 <motion.li key={s.label} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.5, ease: EASE }}>
@@ -289,6 +278,19 @@ export default function Contact({ bare = false }) {
                 </motion.li>
               ))}
             </ul>
+            {/* Sits *below* the social links on purpose: the label starts with
+                "Or", so it needs the channels above to be the alternative to. */}
+            <Fade delay={0.2} y={16}>
+              <Magnetic strength={0.25} max={8}>
+                <a
+                  href="#cf-name"
+                  data-cursor="contact"
+                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-lime px-7 py-4 font-mono text-[13px] tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-[#b8e356]"
+                >
+                  <Send size={16} aria-hidden="true" /> Or fill the form
+                </a>
+              </Magnetic>
+            </Fade>
           </div>
           <div className="lg:col-span-7">
             <Fade y={26} delay={0.1}>
