@@ -52,7 +52,7 @@ Rules
 
 ## 5. Components
 - **Buttons:** solid (`indigo-ink` bg / ivory text — 5.54:1), outline (1px ink/25), ghost-underline (text + animated underline), lime solid on dark contact. All magnetic on desktop (`Magnetic`, ±6px). Hover: one step deeper (`#4B3FC2`) + arrow slide 4px; active: scale .98.
-- **Tags/chips:** mono 11px, 1px border, pill; dashed variant = "learning / simulation".
+- **Tags/chips:** mono 11px, 1px border, pill; dashed variant = "learning / simulation". Solid chips are claimed areas (e.g. the `Full Stack Development` group) — never render that group dashed.
 - **Cards:** only where semantic — certificate tiles (rail), mosaic tiles, form panel. Projects use immersive panels, experience uses timeline entries, skills use typographic lists.
 - **Section head:** mono index `§0n` + accent dot + thin rule + masked display title + optional right-side mono note.
 - **Browser mockup:** paper chrome bar, 3 dots, mono url; screenshots inside; `shadow-panel`.

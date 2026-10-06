@@ -6,7 +6,7 @@ Everything editable lives in `src/data/*.js` and `public/`. Components read from
 `src/data/profile.js`
 - `name`, `headline`, `location`, `coordinates`, `email`
 - `social.*` — only real public profiles
-- `currentlyExploring` — learning topics (rendered as dashed chips; keep the “learning, not expertise” framing)
+- `currentlyExploring` — infrastructure topics still being learned (Linux, Docker, hosting, APIs). They render as dashed chips under “learning targets — not yet claimed as expertise”; keep that framing for **these** chips. (Full Stack Development is a claimed expertise area — see §4.)
 - `facts` — the four hero micro-facts
 
 ## 2. Add / edit a project
@@ -29,8 +29,20 @@ Everything editable lives in `src/data/*.js` and `public/`. Components read from
 - `simulations[]` = Forage-style job simulations. Never merge the two lists; the UI labels simulations as **not employment**.
 - Never invent metrics (reach %, followers, revenue, post counts).
 
-## 4. Education
-`src/data/education.js` — degree block + `school[]`. Coursework chips live in `src/data/skills.js → coursework` (academic, not expertise claims).
+## 4. Education & skills
+`src/data/education.js` — degree block + `school[]`.
+
+`src/data/skills.js → skillGroups` — seven groups, rendered in array order, each with an `index`
+shown as `01`…`07`. **Keep those sequential** when adding, reordering or removing a group.
+
+- **`Full Stack Development` (index 01) is a claimed expertise area** — a binding owner decision
+  (correction C3). Present it as expertise, not as something being learned.
+- Build it **only from technologies that already appear elsewhere in `src/data`**. Never add a
+  framework (Node, Express, Django, Flask …) or a tool the owner has not confirmed — ask first.
+- `Currently exploring` stays `dashed: true` with its “not yet claimed as expertise” note; that is
+  the only learning-framed group.
+- `coursework` (bottom of the file) is an academic list, rendered on Education as “foundations, not
+  claimed expertise”. Do not touch it when editing the groups.
 
 ## 5. Certifications
 `src/data/certifications.js`
@@ -70,6 +82,8 @@ Keep: validation, honeypot, loading/success/error states, no secrets in the bund
 - [ ] Is every claim supported by a supplied source (resume/certificate/repo)?
 - [ ] Any new link real and public?
 - [ ] Recreations still labelled? Simulations still labelled?
+- [ ] Full Stack Development still present as an expertise group, and every chip in it a technology
+      that already exists in `src/data` (no unconfirmed framework)?
 - [ ] No physical certificate files added to `public/`?
 - [ ] `npm run build` passes?
 - [ ] Checked at 375px and 1440px (no overflow, no clipped type)?

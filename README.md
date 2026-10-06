@@ -127,9 +127,15 @@ See [`UPDATE_GUIDE.md`](./UPDATE_GUIDE.md).
 
 ## Honesty policy baked into the content
 
+- **Full Stack Development is presented as an expertise area** — the `Full Stack Development`
+  group in `src/data/skills.js`, built only from technologies the site already lists (interface,
+  server-side & data, version control). No backend framework is named, because none has been
+  confirmed.
 - Recreations are labelled **“Website Recreation”** (no affiliation/endorsement implied).
 - Forage entries are labelled **Virtual Job Simulation — not employment**.
-- Learning topics (Docker, Linux, deployment, APIs) are shown as *exploring*, never as production expertise.
+- Infrastructure topics still being learned (Docker, Linux, deployment, APIs) stay under
+  *Currently exploring* and are labelled “not yet claimed as expertise” — that framing applies to
+  those chips, not to Full Stack Development.
 - No invented metrics, users, testimonials, deployments or repository links.
 
 ## License

@@ -23,14 +23,18 @@ export const profile = {
     'Emerging Technologies',
   ],
   aboutParagraphs: [
-    'I am a Computer Science & Engineering student interested in software development, modern web technologies and Generative AI. I like taking ideas from a blank file to a working interface — writing the markup, styling it properly, and wiring the behaviour myself.',
+    'I am a Computer Science & Engineering student working full stack — the interface, the logic and the data — with Generative AI alongside. I like taking ideas from a blank file to a working interface: writing the markup, styling it properly, and wiring the behaviour myself.',
     'I enjoy building practical projects and responsive web experiences while continuously learning new technologies. Most of what I know comes from building: recreating real websites piece by piece, reading what broke, and fixing it until it behaved.',
     'Right now I am exploring Generative AI tooling, API integration, and the path from “it runs on my machine” to “it runs somewhere else” — hosting, Docker and Linux, one experiment at a time.',
   ],
+  // Four facts, and no more (the hero grid is built for four). 'Base' was the one
+  // this slot could lose: the hero prose above already says "a B.Tech CSE student
+  // in Kanpur", and the footer carries the location too. C3 puts the expertise
+  // area in the first screen instead.
   facts: [
     { label: 'Degree', value: 'B.Tech CSE · KIT, AKTU' },
     { label: 'Window', value: '2023 — 2027' },
-    { label: 'Base', value: 'Kanpur, IN' },
+    { label: 'Focus', value: 'Full Stack Development' },
     { label: 'Strongest language', value: 'C' },
   ],
 }

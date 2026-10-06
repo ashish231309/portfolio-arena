@@ -10,7 +10,7 @@ function TerminalCard() {
     { p: '$ whoami', c: 'text-fog' },
     { p: 'ashish-kumar :: btech-cse @ kit, aktu', c: 'text-ivory' },
     { p: '$ cat focus.txt', c: 'text-fog' },
-    { p: 'software-dev · web-dev · generative-ai', c: 'text-cyan' },
+    { p: 'full-stack · software-dev · web-dev · generative-ai', c: 'text-cyan' },
     { p: '$ ls ./currently-exploring', c: 'text-fog' },
     { p: profile.currentlyExploring.join('  ').toLowerCase(), c: 'text-lime' },
     { p: '$ status --now', c: 'text-fog' },
@@ -60,9 +60,9 @@ export default function About({ bare = false }) {
         <div className="grid lg:grid-cols-12 gap-12">
           <div className="lg:col-span-7">
             <WordReveal
-              text="I am a Computer Science & Engineering student interested in software development, modern web technologies and Generative AI."
+              text="I am a Computer Science & Engineering student working full stack — the interface, the logic and the data — with Generative AI alongside."
               className="font-display text-[clamp(1.35rem,2.5vw,2rem)] leading-snug tracking-tight text-ink"
-              highlight={['Generative', 'software', 'web']}
+              highlight={['full', 'stack', 'Generative', 'AI']}
               highlightClass="text-indigo-ink"
             />
             <div className="mt-7 space-y-5 max-w-[62ch] text-[clamp(0.98rem,1.05vw,1.08rem)] leading-relaxed text-muted">
