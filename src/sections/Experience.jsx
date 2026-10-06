@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useSpring } from 'motion/react'
 import { Briefcase, GraduationCap, ArrowUpRight, FlaskConical } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade, Stagger, StaggerItem } from '../components/Reveal'
 import { experience, simulations } from '../data/experience'
@@ -77,8 +77,13 @@ function Timeline() {
 }
 
 export default function Experience({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+
   return (
-    <Section id="experience" bg="ivory" accent="coral" className={sectionPadding}>
+    <Wrapper id="experience" bg="ivory" accent="coral" className={sectionPadding}>
       <div className={container}>
         {!bare && (
           <SectionHead index="04" title={['Work, internships', '& simulated sprints.']} note="Experience" accent="coral" id="experience-title" />
@@ -120,10 +125,16 @@ export default function Experience({ bare = false }) {
               <div className="mt-6 grid md:grid-cols-2 gap-5">
                 {simulations.map((sim, i) => (
                   <Fade key={sim.id} y={26} delay={i * 0.1}>
-                    <article
-                      data-cursor="cert"
-                      className="group h-full rounded-md2 border border-dashed border-ink/25 bg-paper p-6 transition-all duration-500 hover:-translate-y-1 hover:border-cobalt hover:shadow-lift"
-                    >
+                    <article className="group relative h-full rounded-md2 border border-dashed border-ink/25 bg-paper p-6 transition-all duration-500 hover:-translate-y-1 hover:border-cobalt hover:shadow-lift">
+                      {/* stretched link: the whole card opens the simulation certificate */}
+                      <a
+                        href={sim.certificate}
+                        target="_blank"
+                        rel="noreferrer"
+                        data-cursor="cert"
+                        aria-label={`View the ${sim.org} ${sim.title} certificate — opens in a new tab`}
+                        className="absolute inset-0 z-10 rounded-md2"
+                      />
                       <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-cobalt">{sim.org}</p>
                       <h3 className="mt-2 font-display font-bold tracking-tight text-xl leading-snug">{sim.title}</h3>
                       <p className="mt-2 font-mono text-[11px] tracking-[0.12em] uppercase text-muted">
@@ -136,14 +147,12 @@ export default function Experience({ bare = false }) {
                           </li>
                         ))}
                       </ul>
-                      <a
-                        href={sim.certificate}
-                        target="_blank"
-                        rel="noreferrer"
+                      <span
+                        aria-hidden="true"
                         className="mt-5 inline-flex items-center gap-1 font-mono text-[11px] tracking-[0.14em] uppercase text-cobalt underline-slide"
                       >
                         View certificate <ArrowUpRight size={12} aria-hidden="true" />
-                      </a>
+                      </span>
                     </article>
                   </Fade>
                 ))}
@@ -152,6 +161,6 @@ export default function Experience({ bare = false }) {
           </div>
         </div>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

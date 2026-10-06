@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { Sparkles } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { WordReveal, Fade, Parallax } from '../components/Reveal'
 import { profile } from '../data/profile'
@@ -46,8 +46,13 @@ function TerminalCard() {
 }
 
 export default function About({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+
   return (
-    <Section id="about" bg="ivory" accent="cyan" className={sectionPadding}>
+    <Wrapper id="about" bg="ivory" accent="cyan" className={sectionPadding}>
       <div className={container}>
         {!bare && (
           <SectionHead index="01" title={['A student developer,', 'building in public.']} note="About" accent="cyan" id="about-title" />
@@ -109,6 +114,6 @@ export default function About({ bare = false }) {
           </div>
         </div>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

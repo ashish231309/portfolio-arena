@@ -1,9 +1,8 @@
 import { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence, MotionConfig } from 'motion/react'
-import Lenis from 'lenis'
 import { SiteProvider } from './lib/site'
-import { useReducedMotionPref } from './hooks/useMediaQuery'
+import { LenisProvider, useLenis, useScrollToTop } from './lib/scroll'
 import ErrorBoundary from './components/ErrorBoundary'
 import Cursor from './components/Cursor'
 import Nav from './components/Nav'
@@ -47,43 +46,47 @@ function AnimatedRoutes() {
   )
 }
 
+/**
+ * Route-level scroll housekeeping: every navigation resets to the top through
+ * the one Lenis instance and then re-measures the page once the new route has
+ * laid out (otherwise Lenis keeps the old document height and stops scrolling
+ * short). Must render inside <LenisProvider>.
+ */
+function RouteScroll() {
+  const lenis = useLenis()
+  const scrollToTop = useScrollToTop()
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    scrollToTop({ immediate: true })
+    if (!lenis) return undefined
+    const id = requestAnimationFrame(() => lenis.resize())
+    return () => cancelAnimationFrame(id)
+  }, [pathname, lenis, scrollToTop])
+
+  return null
+}
+
 export default function App() {
-  const reduced = useReducedMotionPref()
   const location = useLocation()
-
-  // Lenis smooth scrolling (window-based, keeps anchors/sticky/a11y intact)
-  useEffect(() => {
-    if (reduced) return undefined
-    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true })
-    let raf = requestAnimationFrame(function loop(time) {
-      lenis.raf(time)
-      raf = requestAnimationFrame(loop)
-    })
-    return () => {
-      cancelAnimationFrame(raf)
-      lenis.destroy()
-    }
-  }, [reduced])
-
-  // reset scroll on route change
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' })
-  }, [location.pathname])
 
   return (
     <MotionConfig reducedMotion="user">
-      <SiteProvider>
-        <Intro />
-        <ScrollProgress />
-        <Cursor />
-        <Nav />
-        <ErrorBoundary key={location.pathname}>
-          <AnimatedRoutes />
-        </ErrorBoundary>
-        <Footer />
-        {/* film grain */}
-        <div className="noise-layer pointer-events-none fixed inset-0 z-[80] opacity-[0.05] mix-blend-multiply" aria-hidden="true" />
-      </SiteProvider>
+      <LenisProvider>
+        <RouteScroll />
+        <SiteProvider>
+          <Intro />
+          <ScrollProgress />
+          <Cursor />
+          <Nav />
+          <ErrorBoundary key={location.pathname}>
+            <AnimatedRoutes />
+          </ErrorBoundary>
+          <Footer />
+          {/* film grain */}
+          <div className="noise-layer pointer-events-none fixed inset-0 z-[80] opacity-[0.05] mix-blend-multiply" aria-hidden="true" />
+        </SiteProvider>
+      </LenisProvider>
     </MotionConfig>
   )
 }

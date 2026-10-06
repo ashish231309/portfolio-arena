@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { ArrowUpRight, Loader2, CheckCircle2, AlertCircle, Mail, Send } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade, WordReveal } from '../components/Reveal'
 import Magnetic from '../components/Magnetic'
@@ -9,6 +9,8 @@ import { profile } from '../data/profile'
 import { EASE } from '../lib/motion'
 
 const FORM_ENDPOINT = 'https://formsubmit.co/ajax/ashish1492a@gmail.com'
+// A2: never leave the button stuck on "Sending…" — 10 s cap on the request.
+const FORM_TIMEOUT_MS = 10000
 
 const initialForm = { name: '', email: '', subject: '', message: '', honey: '' }
 
@@ -38,6 +40,44 @@ function Field({ id, label, error, children }) {
 const inputCls =
   'mt-2 w-full bg-transparent border-b border-ivory/20 py-2.5 text-[15px] text-ivory placeholder:text-fog/50 focus:border-cyan focus:outline-none transition-colors'
 
+/**
+ * POST the form with a hard timeout (A2). The abort is mirrored by a race so
+ * the promise rejects at `timeoutMs` even if the request ignores `signal`.
+ */
+export async function sendForm(values, { endpoint = FORM_ENDPOINT, timeoutMs = FORM_TIMEOUT_MS } = {}) {
+  const controller = new AbortController()
+  let timer
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort()
+      reject(new Error(`form request timed out after ${timeoutMs}ms`))
+    }, timeoutMs)
+  })
+  try {
+    const res = await Promise.race([
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          subject: values.subject,
+          message: values.message,
+          _subject: `Portfolio — ${values.subject}`,
+          _template: 'table',
+          _honey: values.honey,
+        }),
+        signal: controller.signal,
+      }),
+      timeout,
+    ])
+    if (!res.ok) throw new Error(`form service responded ${res.status}`)
+    return res
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 function ContactForm() {
   const [values, setValues] = useState(initialForm)
   const [errors, setErrors] = useState({})
@@ -56,23 +96,12 @@ function ContactForm() {
     }
     setState('sending')
     try {
-      const res = await fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          subject: values.subject,
-          message: values.message,
-          _subject: `Portfolio — ${values.subject}`,
-          _template: 'table',
-          _honey: values.honey,
-        }),
-      })
-      if (!res.ok) throw new Error(`form service responded ${res.status}`)
+      await sendForm(values)
       setState('success')
       setValues(initialForm)
     } catch {
+      // timeout, abort, network failure or a non-2xx answer all land here:
+      // the button re-enables and the error copy points at the real address.
       setState('error')
     }
   }
@@ -178,7 +207,8 @@ function ContactForm() {
           )}
           {state === 'error' && (
             <span className="inline-flex items-center gap-2 text-coral">
-              <AlertCircle size={15} aria-hidden="true" /> Something broke — email me directly below.
+              <AlertCircle size={15} aria-hidden="true" /> Something broke — email me at{' '}
+              <strong className="font-semibold">{profile.email}</strong>, in the left column.
             </span>
           )}
         </p>
@@ -188,6 +218,11 @@ function ContactForm() {
 }
 
 export default function Contact({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+
   const socials = [
     { label: 'GitHub', href: profile.social.github, handle: '@ashish1492a' },
     { label: 'LinkedIn', href: profile.social.linkedin, handle: 'ashish-kumar-52507641b' },
@@ -195,7 +230,7 @@ export default function Contact({ bare = false }) {
   ]
 
   return (
-    <Section id="contact" bg="deeper" accent="lime" className={`${sectionPadding} relative`}>
+    <Wrapper id="contact" bg="deeper" accent="lime" className={`${sectionPadding} relative`}>
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -bottom-6 left-0 right-0 text-center font-display font-bold tracking-mega text-[clamp(4rem,15vw,12rem)] text-ivory/[0.04] leading-none select-none"
@@ -253,6 +288,6 @@ export default function Contact({ bare = false }) {
           </div>
         </div>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

@@ -23,7 +23,13 @@ function FeaturedStory({ project }) {
       <div className="lg:col-span-6">
         <div className="lg:sticky lg:top-24">
           <ScaleIn>
-            <div className="rounded-md2 overflow-hidden bg-paper border border-ink/10 shadow-panel" data-cursor="project" data-cursor-label="OPEN CASE">
+            <Link
+              to={`/projects/${project.slug}`}
+              data-cursor="project"
+              data-cursor-label="OPEN CASE"
+              aria-label={`Open the ${project.title} case study`}
+              className="block rounded-md2 overflow-hidden bg-paper border border-ink/10 shadow-panel"
+            >
               <div className="flex items-center gap-2 px-4 py-3 border-b border-ink/10 bg-paper">
                 <span className="w-2.5 h-2.5 rounded-full bg-coral" aria-hidden="true" />
                 <span className="w-2.5 h-2.5 rounded-full bg-lime" aria-hidden="true" />
@@ -51,7 +57,7 @@ function FeaturedStory({ project }) {
                   {String(frame + 1).padStart(2, '0')} / {project.gallery[frame]?.label ?? `frame ${frame + 1}`}
                 </span>
               </div>
-            </div>
+            </Link>
           </ScaleIn>
           {/* frame progress ticks */}
           <div className="mt-4 flex gap-1.5" aria-hidden="true">

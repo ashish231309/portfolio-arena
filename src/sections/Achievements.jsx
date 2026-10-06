@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { Shield, Trophy, Feather, Medal, Users } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { achievements, traits } from '../data/achievements'
 import { EASE } from '../lib/motion'
@@ -54,8 +54,13 @@ function Tile({ item, i }) {
 }
 
 export default function Achievements({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+
   return (
-    <Section id="achievements" bg="ivory" accent="lime" className={sectionPadding}>
+    <Wrapper id="achievements" bg="ivory" accent="lime" className={sectionPadding}>
       <div className={container}>
         {!bare && (
           <SectionHead
@@ -92,6 +97,6 @@ export default function Achievements({ bare = false }) {
           participation is stated as participation — results only where a result actually exists.
         </p>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

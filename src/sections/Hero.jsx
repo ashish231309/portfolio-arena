@@ -7,13 +7,17 @@ import Magnetic from '../components/Magnetic'
 import { MaskLines, Fade, Parallax } from '../components/Reveal'
 import { useSite } from '../lib/site'
 import { useFinePointer, useReducedMotionPref } from '../hooks/useMediaQuery'
+import { useViewport } from '../hooks/useViewport'
 
 function OrbitVisual() {
   const { px, py } = useSite()
   const fine = useFinePointer()
   const reduced = useReducedMotionPref()
-  const rotateX = useSpring(useTransform(py, [0, window.innerHeight], [7, -7]), { stiffness: 90, damping: 18 })
-  const rotateY = useSpring(useTransform(px, [0, window.innerWidth], [-9, 9]), { stiffness: 90, damping: 18 })
+  // Viewport via hook (never read during render): SSR/prerender safe and the
+  // tilt range follows the window after a resize instead of freezing.
+  const { width, height } = useViewport()
+  const rotateX = useSpring(useTransform(py, [0, height], [7, -7]), { stiffness: 90, damping: 18 })
+  const rotateY = useSpring(useTransform(px, [0, width], [-9, 9]), { stiffness: 90, damping: 18 })
 
   const nodes = [
     { label: 'SW', angle: 0, color: '#6C5CE7', r: 46 },

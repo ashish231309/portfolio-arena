@@ -1,5 +1,5 @@
 import { ArrowUpRight, BadgeCheck } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade } from '../components/Reveal'
 import { certifications, physicalCertificatesNote } from '../data/certifications'
@@ -25,9 +25,17 @@ function CertTile({ cert, i }) {
     <Fade y={30} delay={Math.min(i * 0.07, 0.3)} className="snap-start shrink-0 w-[82vw] sm:w-[340px]">
       <article
         onMouseMove={onMove}
-        data-cursor="cert"
         className={`spotlight group relative flex h-full flex-col rounded-md2 border border-ivory/10 bg-[#182136] p-6 transition-all duration-500 hover:-translate-y-1.5 ${tileBorder[cert.accent]}`}
       >
+        {/* stretched link: the whole card opens the credential, so the OPEN cursor is truthful */}
+        <a
+          href={cert.file}
+          target="_blank"
+          rel="noreferrer"
+          data-cursor="cert"
+          aria-label={`View "${cert.title}" certificate — opens the PDF in a new tab`}
+          className="absolute inset-0 z-10 rounded-md2"
+        />
         <div className="flex items-start justify-between gap-3">
           <p className={`font-mono text-[10px] tracking-[0.22em] uppercase ${accentText[cert.accent]}`}>{cert.provider}</p>
           <BadgeCheck size={16} className="text-fog group-hover:text-ivory transition-colors" aria-hidden="true" />
@@ -42,14 +50,12 @@ function CertTile({ cert, i }) {
           {cert.credential && (
             <p className="mt-1 truncate font-mono text-[10px] tracking-[0.1em] text-fog">{cert.credential}</p>
           )}
-          <a
-            href={cert.file}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-ivory/25 px-4 py-2 font-mono text-[10px] tracking-[0.18em] uppercase text-ivory transition-colors duration-300 hover:bg-ivory hover:text-ink"
+          <span
+            aria-hidden="true"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-ivory/25 px-4 py-2 font-mono text-[10px] tracking-[0.18em] uppercase text-ivory transition-colors duration-300 group-hover:bg-ivory group-hover:text-ink"
           >
             View certificate <ArrowUpRight size={12} aria-hidden="true" />
-          </a>
+          </span>
         </div>
         <span className="absolute top-4 right-4 font-mono text-[10px] text-ivory/20" aria-hidden="true">
           {String(i + 1).padStart(2, '0')}
@@ -60,8 +66,13 @@ function CertTile({ cert, i }) {
 }
 
 export default function Certifications({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+
   return (
-    <Section id="certifications" bg="deep" accent="lime" className={sectionPadding}>
+    <Wrapper id="certifications" bg="deep" accent="lime" className={sectionPadding}>
       <div className={container}>
         {!bare && (
           <SectionHead
@@ -100,6 +111,6 @@ export default function Certifications({ bare = false }) {
           </p>
         </Fade>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

@@ -1,7 +1,7 @@
 import { motion, useInView } from 'motion/react'
 import { useRef } from 'react'
 import { GraduationCap, School } from 'lucide-react'
-import Section, { container, sectionPadding } from '../components/Section'
+import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade } from '../components/Reveal'
 import { education, } from '../data/education'
@@ -48,8 +48,13 @@ function DegreeProgress() {
 }
 
 export default function Education({ bare = false }) {
+  // Non-bare: this component owns its <section> (used on the home page).
+  // Bare: the page owns the single <section>; this only contributes a
+  // background surface + tone signal, so nothing double-wraps.
+  const Wrapper = bare ? SectionSurface : Section
+
   return (
-    <Section id="education" bg="tint" accent="indigo" className={sectionPadding}>
+    <Wrapper id="education" bg="tint" accent="indigo" className={sectionPadding}>
       <div className={container}>
         {!bare && (
           <SectionHead index="05" title={['Four years, ten subjects,', 'one direction.']} note="Education" accent="indigo" id="education-title" />
@@ -114,6 +119,6 @@ export default function Education({ bare = false }) {
           ))}
         </div>
       </div>
-    </Section>
+    </Wrapper>
   )
 }

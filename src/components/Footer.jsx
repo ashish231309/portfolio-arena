@@ -3,6 +3,7 @@ import { Github, Linkedin, Instagram, Mail, ArrowUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import { profile, navLinks } from '../data/profile'
 import { container } from './Section'
+import { useScrollToTop } from '../lib/scroll'
 import Magnetic from './Magnetic'
 
 const socials = [
@@ -12,6 +13,7 @@ const socials = [
 ]
 
 export default function Footer() {
+  const scrollToTop = useScrollToTop()
   return (
     <footer className="relative bg-deeper text-ivory dark-zone overflow-hidden">
       <div className="absolute inset-0 bg-dots-dark opacity-40" aria-hidden="true" />
@@ -82,7 +84,7 @@ export default function Footer() {
           <motion.button
             type="button"
             data-cursor="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => scrollToTop()}
             className="grid place-items-center w-10 h-10 rounded-full border border-ivory/20 hover:border-lime hover:text-lime transition-colors"
             aria-label="Back to top"
             whileHover={{ y: -3 }}
