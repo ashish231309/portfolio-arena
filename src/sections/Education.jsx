@@ -38,7 +38,7 @@ function DegreeProgress() {
       </div>
       <div className="mt-3 flex justify-between font-mono text-[10px] tracking-[0.16em] text-muted">
         {years.map((y, i) => (
-          <span key={y} className={i === 3 ? 'text-indigo font-bold' : ''}>
+          <span key={y} className={i === 3 ? 'text-indigo-ink font-bold' : ''}>
             {y}
           </span>
         ))}
@@ -52,6 +52,8 @@ export default function Education({ bare = false }) {
   // Bare: the page owns the single <section>; this only contributes a
   // background surface + tone signal, so nothing double-wraps.
   const Wrapper = bare ? SectionSurface : Section
+  // Bare pages own the only h1, so entry titles take the h2 slot (T26).
+  const H = bare ? 'h2' : 'h3'
 
   return (
     <Wrapper id="education" bg="tint" accent="indigo" className={sectionPadding}>
@@ -68,12 +70,12 @@ export default function Education({ bare = false }) {
                   {education.degree.started} — {education.degree.graduation}
                   <span className="rounded-full bg-lime px-3 py-0.5 text-[10px] tracking-[0.14em] text-ink">{education.degree.current}</span>
                 </div>
-                <h3 className="mt-4 font-display font-bold tracking-tighter2 text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">
+                <H className="mt-4 font-display font-bold tracking-tighter2 text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">
                   {education.degree.title}
-                </h3>
+                </H>
                 <p className="mt-2 font-body font-semibold text-ink/80">{education.degree.institute}</p>
                 <p className="mt-1 text-sm text-muted">{education.degree.university}</p>
-                <p className="mt-4 font-mono text-[12px] tracking-[0.14em] text-indigo">{education.degree.cgpa}</p>
+                <p className="mt-4 font-mono text-[12px] tracking-[0.14em] text-indigo-ink">{education.degree.cgpa}</p>
                 <DegreeProgress />
               </article>
             </Fade>
@@ -91,7 +93,7 @@ export default function Education({ bare = false }) {
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted/80">
+              <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted">
                 academic coursework — foundations, not claimed expertise
               </p>
             </Fade>

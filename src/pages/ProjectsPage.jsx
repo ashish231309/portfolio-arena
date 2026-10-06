@@ -54,7 +54,7 @@ export default function ProjectsPage() {
                   ))}
                 </ul>
                 <div className="mt-auto pt-6 flex items-center gap-4">
-                  <span className="inline-flex items-center gap-1.5 font-body font-bold text-sm text-indigo">
+                  <span className="inline-flex items-center gap-1.5 font-body font-bold text-sm text-indigo-ink">
                     Case study <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                   </span>
                   {p.github && (

@@ -113,7 +113,7 @@ export default function Nav() {
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[120] focus:bg-indigo focus:text-ivory focus:px-4 focus:py-2 focus:rounded-sm2 font-mono text-xs tracking-widest uppercase"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[120] focus:bg-indigo-ink focus:text-ivory focus:px-4 focus:py-2 focus:rounded-sm2 font-mono text-xs tracking-widest uppercase"
       >
         Skip to content
       </a>
@@ -133,7 +133,7 @@ export default function Nav() {
             data-cursor="link"
             className={`group flex items-baseline gap-2 font-display font-bold tracking-tighter2 text-lg ${darkUI ? 'text-ivory' : 'text-ink'}`}
           >
-            <span className="grid place-items-center w-7 h-7 rounded-sm2 bg-indigo text-ivory text-[11px] font-mono tracking-normal transition-transform duration-500 group-hover:rotate-[10deg] group-hover:scale-105">
+            <span className="grid place-items-center w-7 h-7 rounded-sm2 bg-indigo-ink text-ivory text-[11px] font-mono tracking-normal transition-transform duration-500 group-hover:rotate-[10deg] group-hover:scale-105">
               {profile.initials}
             </span>
             <span className="hidden sm:inline">

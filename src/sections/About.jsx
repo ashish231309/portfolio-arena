@@ -63,6 +63,7 @@ export default function About({ bare = false }) {
               text="I am a Computer Science & Engineering student interested in software development, modern web technologies and Generative AI."
               className="font-display text-[clamp(1.35rem,2.5vw,2rem)] leading-snug tracking-tight text-ink"
               highlight={['Generative', 'software', 'web']}
+              highlightClass="text-indigo-ink"
             />
             <div className="mt-7 space-y-5 max-w-[62ch] text-[clamp(0.98rem,1.05vw,1.08rem)] leading-relaxed text-muted">
               <Fade delay={0.1}>
@@ -89,13 +90,13 @@ export default function About({ bare = false }) {
                   {profile.currentlyExploring.map((item) => (
                     <li
                       key={item}
-                      className="rounded-full border border-dashed border-indigo/50 px-4 py-1.5 font-mono text-[11px] tracking-[0.08em] text-indigo transition-transform duration-300 hover:-translate-y-0.5"
+                      className="rounded-full border border-dashed border-indigo/50 px-4 py-1.5 font-mono text-[11px] tracking-[0.08em] text-indigo-ink transition-transform duration-300 hover:-translate-y-0.5"
                     >
                       {item}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-3 font-mono text-[10px] tracking-[0.14em] uppercase text-muted/80">
+                <p className="mt-3 font-mono text-[10px] tracking-[0.14em] uppercase text-muted">
                   learning targets — not yet claimed as expertise
                 </p>
               </div>

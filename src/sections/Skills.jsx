@@ -2,7 +2,7 @@ import Section, { container, sectionPadding } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade, Stagger, StaggerItem } from '../components/Reveal'
 import { skillGroups } from '../data/skills'
-import { accentText } from '../lib/motion'
+import { accentTextDark } from '../lib/motion'
 
 const hoverBg = {
   indigo: 'hover:border-indigo hover:bg-indigo/10',
@@ -59,7 +59,9 @@ export default function Skills({ bare = false }) {
               <Stagger key={g.id} className={`py-8 ${gi > 0 ? 'border-t border-ivory/10' : ''}`} stagger={0.05}>
                 <StaggerItem>
                   <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                    <span className={`font-mono text-[11px] tracking-[0.24em] ${accentText[g.accent]}`}>{g.index}</span>
+                    <span className={`font-mono text-[11px] tracking-[0.24em] ${accentTextDark[g.accent] || accentTextDark.indigo}`}>
+                      {g.index}
+                    </span>
                     <h3 className="font-display font-bold tracking-tighter2 text-[clamp(1.4rem,2.4vw,2rem)] text-ivory">
                       {g.title}
                     </h3>
@@ -74,7 +76,7 @@ export default function Skills({ bare = false }) {
                           data-cursor="link"
                           className={`group inline-flex flex-wrap items-baseline gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 ${
                             g.dashed ? 'border-dashed border-lime/50 text-lime' : 'border-ivory/20 text-ivory/85'
-                          } ${hoverBg[g.accent] || ''}`}
+                          } ${hoverBg[g.accent] || hoverBg.indigo}`}
                         >
                           <span className="font-body font-semibold text-sm">{s.name}</span>
                           <span className="hidden md:inline font-mono text-[10px] tracking-[0.08em] text-fog group-hover:text-ivory/70">

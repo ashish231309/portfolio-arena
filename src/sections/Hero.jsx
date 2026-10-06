@@ -139,7 +139,7 @@ export default function Hero() {
                   <Link
                     to="/projects"
                     data-cursor="button"
-                    className="group inline-flex items-center gap-2 rounded-full bg-indigo px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors duration-300 hover:bg-[#5a4bd4]"
+                    className="group inline-flex items-center gap-2 rounded-full bg-indigo-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors duration-300 hover:bg-[#4B3FC2]"
                   >
                     View projects
                     <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />

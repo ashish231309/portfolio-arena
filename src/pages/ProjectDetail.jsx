@@ -91,7 +91,7 @@ export default function ProjectDetail() {
         <div className={`${container} mt-[clamp(4rem,10vh,7rem)] grid lg:grid-cols-12 gap-12`}>
           <div className="lg:col-span-7">
             <Fade y={12}>
-              <p className="flex items-center gap-2 font-mono text-[11px] tracking-[0.24em] uppercase text-indigo">
+              <p className="flex items-center gap-2 font-mono text-[11px] tracking-[0.24em] uppercase text-indigo-ink">
                 <Wrench size={13} aria-hidden="true" /> Implementation notes
               </p>
             </Fade>
@@ -99,7 +99,7 @@ export default function ProjectDetail() {
               {project.implementation.map((imp, i) => (
                 <StaggerItem key={imp.title} className="border-t border-ink/10 pt-5">
                   <div className="flex gap-4">
-                    <span className="font-mono text-[12px] text-indigo pt-1">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="font-mono text-[12px] text-indigo-ink pt-1">{String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <h2 className="font-display font-bold tracking-tight text-xl">{imp.title}</h2>
                       <p className="mt-2 text-[15px] leading-relaxed text-muted">{imp.body}</p>
@@ -133,7 +133,7 @@ export default function ProjectDetail() {
                   <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-1.5 font-mono text-[12px] text-ink/75">
                     {(project.sections || project.pages).map((s, i) => (
                       <li key={s} className="flex items-baseline gap-2 border-b border-ink/10 py-1">
-                        <span className="text-indigo">{String(i + 1).padStart(2, '0')}</span> {s}
+                        <span className="text-indigo-ink">{String(i + 1).padStart(2, '0')}</span> {s}
                       </li>
                     ))}
                   </ul>
@@ -148,7 +148,7 @@ export default function ProjectDetail() {
                         target="_blank"
                         rel="noreferrer"
                         data-cursor="button"
-                        className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo"
+                        className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo-ink"
                       >
                         <Github size={16} aria-hidden="true" /> View on GitHub
                         <ArrowUpRight size={14} aria-hidden="true" />

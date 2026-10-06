@@ -39,6 +39,13 @@ export const accentText = {
   lime: 'text-lime',
 }
 
+/**
+ * Accent text on DARK grounds: brand indigo (#6C5CE7) only reaches 3.57:1 there,
+ * so dark surfaces use the lighter violet that already exists in the palette.
+ * Every other accent already passes on ink/deep/deeper.
+ */
+export const accentTextDark = { ...accentText, indigo: 'text-indigo-soft' }
+
 export const accentBg = {
   indigo: 'bg-indigo',
   cobalt: 'bg-cobalt',

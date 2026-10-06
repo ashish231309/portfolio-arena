@@ -7,7 +7,7 @@ import { Fade, Stagger, StaggerItem } from '../components/Reveal'
 import { experience, simulations } from '../data/experience'
 import { accentBg } from '../lib/motion'
 
-function Timeline() {
+function Timeline({ level: H = 'h3' }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 60%'] })
   const scaleY = useSpring(scrollYProgress, { stiffness: 120, damping: 24 })
@@ -35,7 +35,7 @@ function Timeline() {
                 </div>
               </StaggerItem>
               <StaggerItem>
-                <h3 className="mt-2 font-display font-bold tracking-tighter2 text-[clamp(1.4rem,2.6vw,2.1rem)]">{job.role}</h3>
+                <H className="mt-2 font-display font-bold tracking-tighter2 text-[clamp(1.4rem,2.6vw,2.1rem)]">{job.role}</H>
                 <p className="mt-1 font-body font-semibold text-sm text-ink/70">{job.org}</p>
               </StaggerItem>
               <StaggerItem>
@@ -61,7 +61,7 @@ function Timeline() {
                       target="_blank"
                       rel="noreferrer"
                       data-cursor="cert"
-                      className="inline-flex items-center gap-1 rounded-full border border-indigo/40 px-3 py-1 font-mono text-[10px] tracking-[0.1em] uppercase text-indigo hover:bg-indigo hover:text-ivory transition-colors"
+                      className="inline-flex items-center gap-1 rounded-full border border-indigo/40 px-3 py-1 font-mono text-[10px] tracking-[0.1em] uppercase text-indigo-ink hover:bg-indigo-ink hover:text-ivory transition-colors"
                     >
                       Certificate <ArrowUpRight size={11} aria-hidden="true" />
                     </a>
@@ -81,6 +81,8 @@ export default function Experience({ bare = false }) {
   // Bare: the page owns the single <section>; this only contributes a
   // background surface + tone signal, so nothing double-wraps.
   const Wrapper = bare ? SectionSurface : Section
+  // Bare pages own the only h1, so entry titles take the h2 slot (T26).
+  const H = bare ? 'h2' : 'h3'
 
   return (
     <Wrapper id="experience" bg="ivory" accent="coral" className={sectionPadding}>
@@ -102,7 +104,7 @@ export default function Experience({ bare = false }) {
               </Fade>
               <Fade delay={0.15}>
                 <div className="rounded-md2 border border-dashed border-cobalt/50 bg-cobalt/5 p-5">
-                  <p className="flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] uppercase text-cobalt">
+                  <p className="flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] uppercase text-cobalt-ink">
                     <FlaskConical size={13} aria-hidden="true" /> Virtual job simulations
                   </p>
                   <p className="mt-2 text-sm text-muted leading-relaxed">
@@ -114,11 +116,11 @@ export default function Experience({ bare = false }) {
             </div>
           </div>
           <div className="lg:col-span-8">
-            <Timeline />
+            <Timeline level={H} />
 
             <div className="mt-20">
               <Fade y={12}>
-                <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-cobalt flex items-center gap-2">
+                <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-cobalt-ink flex items-center gap-2">
                   <GraduationCap size={14} aria-hidden="true" /> Virtual job simulations — Forage
                 </p>
               </Fade>
@@ -135,8 +137,8 @@ export default function Experience({ bare = false }) {
                         aria-label={`View the ${sim.org} ${sim.title} certificate — opens in a new tab`}
                         className="absolute inset-0 z-10 rounded-md2"
                       />
-                      <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-cobalt">{sim.org}</p>
-                      <h3 className="mt-2 font-display font-bold tracking-tight text-xl leading-snug">{sim.title}</h3>
+                      <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-cobalt-ink">{sim.org}</p>
+                      <H className="mt-2 font-display font-bold tracking-tight text-xl leading-snug">{sim.title}</H>
                       <p className="mt-2 font-mono text-[11px] tracking-[0.12em] uppercase text-muted">
                         {sim.platform} · completed {sim.completed}
                       </p>
@@ -149,7 +151,7 @@ export default function Experience({ bare = false }) {
                       </ul>
                       <span
                         aria-hidden="true"
-                        className="mt-5 inline-flex items-center gap-1 font-mono text-[11px] tracking-[0.14em] uppercase text-cobalt underline-slide"
+                        className="mt-5 inline-flex items-center gap-1 font-mono text-[11px] tracking-[0.14em] uppercase text-cobalt-ink underline-slide"
                       >
                         View certificate <ArrowUpRight size={12} aria-hidden="true" />
                       </span>

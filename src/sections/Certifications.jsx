@@ -3,7 +3,7 @@ import Section, { container, sectionPadding, SectionSurface } from '../component
 import SectionHead from '../components/SectionHead'
 import { Fade } from '../components/Reveal'
 import { certifications, physicalCertificatesNote } from '../data/certifications'
-import { accentText } from '../lib/motion'
+import { accentTextDark } from '../lib/motion'
 
 const tileBorder = {
   indigo: 'hover:border-indigo/60',
@@ -13,7 +13,7 @@ const tileBorder = {
   lime: 'hover:border-lime/60',
 }
 
-function CertTile({ cert, i }) {
+function CertTile({ cert, i, level: H = 'h3' }) {
   const onMove = (e) => {
     const el = e.currentTarget
     const r = el.getBoundingClientRect()
@@ -25,7 +25,7 @@ function CertTile({ cert, i }) {
     <Fade y={30} delay={Math.min(i * 0.07, 0.3)} className="snap-start shrink-0 w-[82vw] sm:w-[340px]">
       <article
         onMouseMove={onMove}
-        className={`spotlight group relative flex h-full flex-col rounded-md2 border border-ivory/10 bg-[#182136] p-6 transition-all duration-500 hover:-translate-y-1.5 ${tileBorder[cert.accent]}`}
+        className={`spotlight group relative flex h-full flex-col rounded-md2 border border-ivory/10 bg-[#182136] p-6 transition-all duration-500 hover:-translate-y-1.5 ${tileBorder[cert.accent] || tileBorder.indigo}`}
       >
         {/* stretched link: the whole card opens the credential, so the OPEN cursor is truthful */}
         <a
@@ -37,10 +37,10 @@ function CertTile({ cert, i }) {
           className="absolute inset-0 z-10 rounded-md2"
         />
         <div className="flex items-start justify-between gap-3">
-          <p className={`font-mono text-[10px] tracking-[0.22em] uppercase ${accentText[cert.accent]}`}>{cert.provider}</p>
+          <p className={`font-mono text-[10px] tracking-[0.22em] uppercase ${accentTextDark[cert.accent] || accentTextDark.indigo}`}>{cert.provider}</p>
           <BadgeCheck size={16} className="text-fog group-hover:text-ivory transition-colors" aria-hidden="true" />
         </div>
-        <h3 className="mt-3 font-display font-bold tracking-tight text-[1.25rem] leading-snug text-ivory">{cert.title}</h3>
+        <H className="mt-3 font-display font-bold tracking-tight text-[1.25rem] leading-snug text-ivory">{cert.title}</H>
         <p className="mt-3 text-[13px] leading-relaxed text-fog">{cert.blurb}</p>
         <div className="mt-auto pt-5">
           <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-ivory/70">{cert.received}</p>
@@ -70,6 +70,8 @@ export default function Certifications({ bare = false }) {
   // Bare: the page owns the single <section>; this only contributes a
   // background surface + tone signal, so nothing double-wraps.
   const Wrapper = bare ? SectionSurface : Section
+  // Bare pages own the only h1, so entry titles take the h2 slot (T26).
+  const H = bare ? 'h2' : 'h3'
 
   return (
     <Wrapper id="certifications" bg="deep" accent="lime" className={sectionPadding}>
@@ -99,7 +101,7 @@ export default function Certifications({ bare = false }) {
       >
         <div className={`${container} flex gap-5 pb-6 pt-2 w-max min-w-full`}>
           {certifications.map((c, i) => (
-            <CertTile key={c.id} cert={c} i={i} />
+            <CertTile key={c.id} cert={c} i={i} level={H} />
           ))}
           <div className="shrink-0 w-6" aria-hidden="true" />
         </div>

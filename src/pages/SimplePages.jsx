@@ -70,7 +70,7 @@ export function AchievementsPage() {
           crumb="/achievements"
           title={['Discipline, sport', '& coordination.']}
           lede="Three years of NCC, inter-school and college sport, and the quiet leadership of running a tournament bracket."
-          accent="coral"
+          accent="lime"
         />
       }>
       <Achievements bare />

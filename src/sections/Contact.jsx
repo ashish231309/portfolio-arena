@@ -38,7 +38,7 @@ function Field({ id, label, error, children }) {
 }
 
 const inputCls =
-  'mt-2 w-full bg-transparent border-b border-ivory/20 py-2.5 text-[15px] text-ivory placeholder:text-fog/50 focus:border-cyan focus:outline-none transition-colors'
+  'mt-2 w-full bg-transparent border-b border-ivory/45 py-2.5 text-[15px] text-ivory placeholder:text-fog/80 focus:border-cyan transition-colors'
 
 /**
  * POST the form with a hard timeout (A2). The abort is mirrored by a race so
@@ -247,6 +247,7 @@ export default function Contact({ bare = false }) {
               text="Open to internships, collaborations, study projects and good conversations about the web."
               className="font-display text-[clamp(1.25rem,2.2vw,1.7rem)] leading-snug tracking-tight text-ivory"
               highlight={['internships', 'collaborations', 'web.']}
+              highlightClass="text-indigo-soft"
             />
             <Fade delay={0.2} y={16}>
               <Magnetic strength={0.25} max={8}>

@@ -121,7 +121,7 @@ export default function Cursor() {
         }}
       />
       <motion.span
-        className="fixed top-0 left-0 rounded-full bg-indigo text-ivory font-mono flex items-center justify-center text-[10px] tracking-[0.16em] uppercase whitespace-nowrap"
+        className="fixed top-0 left-0 rounded-full bg-indigo-ink text-ivory font-mono flex items-center justify-center text-[10px] tracking-[0.16em] uppercase whitespace-nowrap"
         style={{
           x: ringX,
           y: ringY,

@@ -79,7 +79,7 @@ function FeaturedStory({ project }) {
             body: (
               <>
                 <p className="text-muted leading-relaxed">{project.summary}</p>
-                <span className="mt-5 inline-block rounded-full bg-indigo/10 border border-indigo/30 px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase text-indigo">
+                <span className="mt-5 inline-block rounded-full bg-indigo/10 border border-indigo/30 px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase text-indigo-ink">
                   {project.label} — unofficial study project
                 </span>
               </>
@@ -95,7 +95,7 @@ function FeaturedStory({ project }) {
                 <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1.5 font-mono text-[12px] text-ink/80">
                   {project.sections.map((s, i) => (
                     <li key={s} className="flex items-baseline gap-2 border-b border-ink/10 py-1">
-                      <span className="text-indigo">{String(i + 1).padStart(2, '0')}</span> {s}
+                      <span className="text-indigo-ink">{String(i + 1).padStart(2, '0')}</span> {s}
                     </li>
                   ))}
                 </ul>
@@ -121,7 +121,7 @@ function FeaturedStory({ project }) {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted/80">
+                <p className="mt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-muted">
                   no affiliation with or endorsement by Coding Ninjas
                 </p>
               </>
@@ -137,7 +137,7 @@ function FeaturedStory({ project }) {
                     target="_blank"
                     rel="noreferrer"
                     data-cursor="button"
-                    className="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo"
+                    className="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo-ink"
                   >
                     <Github size={16} aria-hidden="true" /> View on GitHub
                     <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
@@ -157,7 +157,7 @@ function FeaturedStory({ project }) {
           >
             <BlockObserver onActive={() => setFrame(project.scrollFrames[i] ?? 0)} />
             <Fade y={20}>
-              <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-indigo">{block.head}</p>
+              <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-indigo-ink">{block.head}</p>
               <div className="mt-4 text-[15px]">{block.body}</div>
             </Fade>
           </div>
