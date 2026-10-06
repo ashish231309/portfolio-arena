@@ -5,6 +5,7 @@ import { Github, ArrowUpRight, ChevronLeft, Layers, Wrench } from 'lucide-react'
 import Section, { container } from '../components/Section'
 import { MaskLines, Fade, ScaleIn, Stagger, StaggerItem } from '../components/Reveal'
 import Magnetic from '../components/Magnetic'
+import ProjectImage from '../components/ProjectImage'
 import { getProject } from '../data/projects'
 import { usePageMeta } from '../hooks/usePageMeta'
 
@@ -16,11 +17,9 @@ function GalleryImage({ item, i }) {
     <div ref={ref} className={`overflow-hidden rounded-md2 border border-ink/10 bg-ink ${i % 2 ? 'md:ml-16' : 'md:mr-16'}`}>
       <motion.div style={{ y }} className="overflow-hidden">
         <ScaleIn>
-          <img
-            src={item.src}
-            alt={item.alt}
-            loading="lazy"
-            decoding="async"
+          <ProjectImage
+            item={item}
+            sizes="(min-width: 768px) 92vw, 100vw"
             className="w-full object-cover object-top"
           />
         </ScaleIn>

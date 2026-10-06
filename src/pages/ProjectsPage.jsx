@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowUpRight, Github } from 'lucide-react'
 import Section from '../components/Section'
 import PageIntro from '../components/PageIntro'
+import ProjectImage from '../components/ProjectImage'
 import { Fade, ScaleIn } from '../components/Reveal'
 import { projects } from '../data/projects'
 import { usePageMeta } from '../hooks/usePageMeta'
@@ -26,11 +27,9 @@ export default function ProjectsPage() {
             >
               <div className="md:col-span-7 relative overflow-hidden bg-ink">
                 <ScaleIn from={1}>
-                  <img
-                    src={p.gallery[0].src}
-                    alt={p.gallery[0].alt}
-                    loading="lazy"
-                    decoding="async"
+                  <ProjectImage
+                    item={p.gallery[0]}
+                    sizes="(min-width: 768px) 58vw, 100vw"
                     className="w-full h-full object-cover object-top transition-transform duration-[1.1s] group-hover:scale-[1.04]"
                   />
                 </ScaleIn>

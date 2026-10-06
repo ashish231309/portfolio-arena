@@ -6,6 +6,7 @@ import Section, { container, sectionPadding } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade, Parallax, ScaleIn } from '../components/Reveal'
 import Magnetic from '../components/Magnetic'
+import ProjectImage from '../components/ProjectImage'
 import { projects } from '../data/projects'
 import { EASE } from '../lib/motion'
 
@@ -38,20 +39,25 @@ function FeaturedStory({ project }) {
                   localhost — coding-ninjas · react 19 · vite 8
                 </span>
               </div>
-              <div className="relative aspect-[16/10] bg-ink">
+              {/* 16/9 (T30): the Coding Ninjas screenshots are 1264x712 ≈ 16/9, so the
+                  featured frames now sit uncropped instead of losing ~10% off the sides
+                  to a 16/10 box. */}
+              <div className="relative aspect-video bg-ink">
                 <AnimatePresence mode="popLayout">
-                  <motion.img
+                  <motion.div
                     key={frame}
-                    src={project.gallery[frame].src}
-                    alt={project.gallery[frame].alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 w-full h-full object-cover object-top"
+                    className="absolute inset-0"
                     initial={{ opacity: 0, scale: 1.06 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.6, ease: EASE }}
-                  />
+                  >
+                    <ProjectImage
+                      item={project.gallery[frame]}
+                      sizes="(min-width: 1024px) 560px, 92vw"
+                      className="absolute inset-0 w-full h-full object-cover object-top"
+                    />
+                  </motion.div>
                 </AnimatePresence>
                 <span className="absolute bottom-3 left-3 rounded-full bg-ink/80 backdrop-blur px-3 py-1 font-mono text-[10px] tracking-[0.16em] uppercase text-cyan">
                   {String(frame + 1).padStart(2, '0')} / {project.gallery[frame]?.label ?? `frame ${frame + 1}`}
@@ -131,18 +137,26 @@ function FeaturedStory({ project }) {
             head: '04 — Explore it',
             body: (
               <div className="flex flex-wrap items-center gap-4">
-                <Magnetic strength={0.25} max={7}>
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    data-cursor="button"
-                    className="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo-ink"
-                  >
-                    <Github size={16} aria-hidden="true" /> View on GitHub
-                    <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
-                  </a>
-                </Magnetic>
+                {/* T10: never render href={null} — projects without a public repo get a
+                    plain, non-interactive "not published" badge instead of a dead button. */}
+                {project.github ? (
+                  <Magnetic strength={0.25} max={7}>
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      data-cursor="button"
+                      className="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 font-body font-bold text-sm text-ivory transition-colors hover:bg-indigo-ink"
+                    >
+                      <Github size={16} aria-hidden="true" /> View on GitHub
+                      <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+                    </a>
+                  </Magnetic>
+                ) : (
+                  <span className="rounded-full border border-dashed border-ink/30 px-5 py-3 font-mono text-[11px] tracking-[0.14em] uppercase text-muted">
+                    Source not published yet
+                  </span>
+                )}
                 <Link to={`/projects/${project.slug}`} data-cursor="link" className="underline-slide font-body font-semibold text-sm py-3.5">
                   Read the case study →
                 </Link>
@@ -206,11 +220,9 @@ export default function ProjectsHome({ bare = false }) {
               data-cursor="project"
               className="group relative block overflow-hidden rounded-lg2 bg-ink text-ivory"
             >
-              <motion.img
-                src={secondary.gallery[0].src}
-                alt={secondary.gallery[0].alt}
-                loading="lazy"
-                decoding="async"
+              <ProjectImage
+                item={secondary.gallery[0]}
+                sizes="100vw"
                 className="absolute inset-0 w-full h-full object-cover opacity-45 transition-transform duration-[1.2s] ease-out group-hover:scale-[1.05]"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" aria-hidden="true" />

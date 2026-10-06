@@ -17,6 +17,7 @@
  *   PNG   tEXt, iTXt, zTXt, tIME, eXIf chunks
  *   SVG   XML comments, <metadata>, <title>, <desc> nodes
  *   WebP  EXIF / XMP chunks
+ *   WOFF2 optional metadata block and private-data block (both must be absent)
  *
  * WHAT IS ALLOWED (structural, not metadata about a person or device):
  *   JPEG APP0/JFIF and APP14/Adobe headers, DQT/DHT/SOF/SOS image structure;
@@ -214,6 +215,27 @@ function checkWebp(buf) {
   return found
 }
 
+// ---------------------------------------------------------------- WOFF2
+/**
+ * A WOFF2 (T32 self-hosted fonts) may carry an optional metadata block and an
+ * optional private-data block. Both are metadata-bearing by definition, so any
+ * non-zero offset/length is a failure — the copies we ship have metaOffset=0
+ * and privOffset=0, and this keeps it that way if a font is ever replaced.
+ */
+function checkWoff2(buf) {
+  const found = []
+  if (buf.length < 48 || buf.subarray(0, 4).toString('ascii') !== 'wOF2') {
+    return ['file is not a parseable WOFF2']
+  }
+  const metaOffset = buf.readUInt32BE(28)
+  const metaLength = buf.readUInt32BE(32)
+  const privOffset = buf.readUInt32BE(40)
+  const privLength = buf.readUInt32BE(44)
+  if (metaOffset !== 0 || metaLength !== 0) found.push(`WOFF2 metadata block (offset ${metaOffset}, ${metaLength} B)`)
+  if (privOffset !== 0 || privLength !== 0) found.push(`WOFF2 private-data block (offset ${privOffset}, ${privLength} B)`)
+  return found
+}
+
 // ---------------------------------------------------------------- main
 const files = walk(ROOT).sort()
 let bad = 0
@@ -247,6 +269,10 @@ for (const file of files) {
     }
   } else if (ext === '.svg') found = checkSvg(buf)
   else if (ext === '.webp') found = checkWebp(buf)
+  else if (ext === '.woff2') {
+    found = checkWoff2(buf)
+    note = 'metaOffset/privOffset must be 0'
+  }
   else { skipped.push(rel); continue }
 
   if (found.length) {
