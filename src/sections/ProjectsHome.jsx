@@ -8,6 +8,7 @@ import { Fade, Parallax, ScaleIn } from '../components/Reveal'
 import Magnetic from '../components/Magnetic'
 import ProjectImage from '../components/ProjectImage'
 import { projects } from '../data/projects'
+import { spellNumber, capitalize } from '../lib/format'
 import { EASE } from '../lib/motion'
 
 function FeaturedStory({ project }) {
@@ -36,7 +37,7 @@ function FeaturedStory({ project }) {
                 <span className="w-2.5 h-2.5 rounded-full bg-lime" aria-hidden="true" />
                 <span className="w-2.5 h-2.5 rounded-full bg-cyan" aria-hidden="true" />
                 <span className="ml-3 truncate font-mono text-[10px] tracking-[0.14em] uppercase text-muted">
-                  localhost — coding-ninjas · react 19 · vite 8
+                  localhost — {project.slug} · {project.tech.slice(0, 2).join(' · ').toLowerCase()}
                 </span>
               </div>
               {/* 16/9 (T30): the Coding Ninjas screenshots are 1264x712 ≈ 16/9, so the
@@ -92,7 +93,7 @@ function FeaturedStory({ project }) {
             ),
           },
           {
-            head: '02 — Fifteen sections rebuilt',
+            head: `02 — ${capitalize(spellNumber(project.sections.length))} sections rebuilt`,
             body: (
               <>
                 <p className="text-muted leading-relaxed">
@@ -228,7 +229,7 @@ export default function ProjectsHome({ bare = false }) {
               <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" aria-hidden="true" />
               <div className="relative p-[clamp(1.75rem,4vw,3.5rem)] min-h-[380px] flex flex-col justify-end">
                 <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-cyan">
-                  Project 02 — {secondary.tech.join(' · ')}
+                  Project {String(projects.indexOf(secondary) + 1).padStart(2, '0')} — {secondary.tech.join(' · ')}
                 </p>
                 <h3 className="mt-3 font-display font-bold tracking-tighter2 text-[clamp(1.9rem,4.4vw,3.4rem)]">
                   {secondary.title}

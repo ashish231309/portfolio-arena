@@ -6,6 +6,19 @@ import SectionHead from '../components/SectionHead'
 import { Fade } from '../components/Reveal'
 import { education, } from '../data/education'
 import { coursework } from '../data/skills'
+import { spellNumber, capitalize } from '../lib/format'
+
+// Derived from the data so the education headline can never go stale: the
+// duration comes from the degree dates, the subject count from `coursework`.
+// Spelled out to keep the editorial voice ("Four years, ten subjects") — the
+// rendered words are identical to the old hardcoded line.
+const degreeStart = Number(education.degree.started?.match(/\d{4}/)?.[0])
+const degreeEnd = Number(education.degree.graduation?.match(/\d{4}/)?.[0])
+const degreeYears = Number.isFinite(degreeStart) && Number.isFinite(degreeEnd) && degreeEnd > degreeStart ? degreeEnd - degreeStart : null
+const educationHeadline = [
+  `${degreeYears ? capitalize(spellNumber(degreeYears)) : 'Four'} years, ${spellNumber(coursework.length)} subjects,`,
+  'one direction.',
+]
 
 function DegreeProgress() {
   const ref = useRef(null)
@@ -59,7 +72,7 @@ export default function Education({ bare = false }) {
     <Wrapper id="education" bg="tint" accent="indigo" className={sectionPadding}>
       <div className={container}>
         {!bare && (
-          <SectionHead index="05" title={['Four years, ten subjects,', 'one direction.']} note="Education" accent="indigo" id="education-title" />
+          <SectionHead index="05" title={educationHeadline} note="Education" accent="indigo" id="education-title" />
         )}
         <div className="grid lg:grid-cols-12 gap-10">
           <div className="lg:col-span-7">

@@ -86,7 +86,7 @@ export function Stagger({ children, className = '', stagger = 0.08, delay = 0 })
   )
 }
 
-export function StaggerItem({ children, className = '', y = 24 }) {
+export function StaggerItem({ children, className = '' }) {
   return (
     <motion.div variants={fadeUpChild} className={className}>
       {children}

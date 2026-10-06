@@ -5,16 +5,22 @@ import PageIntro from '../components/PageIntro'
 import ProjectImage from '../components/ProjectImage'
 import { Fade, ScaleIn } from '../components/Reveal'
 import { projects } from '../data/projects'
+import { spellNumber, capitalize } from '../lib/format'
 import { usePageMeta } from '../hooks/usePageMeta'
 
 export default function ProjectsPage() {
-  usePageMeta('Projects', 'Frontend website recreations by Ashish Kumar: Coding Ninjas (React 19 + Vite + Tailwind) and BMW (HTML/CSS/JS).')
+  usePageMeta(
+    'Projects',
+    `Frontend website recreations by Ashish Kumar: ${projects
+      .map((p) => `${p.shortTitle} (${p.tech.join(' + ')})`)
+      .join(' and ')}.`,
+  )
   return (
     <Section bg="ivory" accent="indigo" className="pb-[clamp(5rem,10vh,8rem)]">
       <PageIntro
         index="03"
         crumb="/projects"
-        title={['Two recreations,', 'one obsession:']}
+        title={[`${capitalize(spellNumber(projects.length))} ${projects.length === 1 ? 'recreation' : 'recreations'},`, 'one obsession:']}
         lede="Studying real production sites by rebuilding them — honestly labelled, fully owned, no fake demos."
       />
       <div className="mx-auto w-full max-w-[1200px] px-[clamp(1.25rem,4vw,3rem)] space-y-8">

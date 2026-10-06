@@ -26,6 +26,34 @@ npm run build    # production build → dist/
 npm run preview  # preview the build
 ```
 
+### Quality checks
+
+```bash
+npm run lint        # ESLint (flat config + react/react-hooks)
+npm run format      # Prettier — use on files you touched, not the whole repo at once
+npm run check:meta  # confirm no file carries embedded metadata
+npm run qa          # screenshot + overflow/console pass (needs `npm run dev` running)
+npm test            # Playwright smoke tests (builds and serves dist/ itself)
+```
+
+- **`npm run qa`** drives a real browser over the home page, both project case studies, the
+  credential rail and six viewport widths. Screenshots land in `qa/screens/` (gitignored) and it
+  prints the horizontal-overflow and console-error result per shot, exiting non-zero if anything
+  crosses the viewport edge or logs an error. `QA_BASE=http://localhost:4173 npm run qa` points it at
+  a `npm run preview` build instead.
+- **`npm test`** runs the smoke suite in [`tests/smoke.spec.js`](./tests/smoke.spec.js): every route
+  renders one `h1` with no console errors, no horizontal overflow at 320/375/768/1440, each project
+  case study loads only its own `/projects/<slug>/` images (the screenshot-mix-up regression guard),
+  and both 404 surfaces render branded. The Chromium build is required — install it once:
+
+```bash
+npx playwright install chromium
+npm test
+```
+
+  `QA_BASE=http://localhost:5173 npm test` runs the suite against your own dev server instead of the
+  built preview.
+
 For local/production SEO tags, copy `.env.example` to `.env` and set `VITE_SITE_ORIGIN`
 to the deployed origin. Without it, every absolute URL (canonical, `og:image`,
 `robots.txt`, `sitemap.xml`) points at `https://REPLACE-WITH-YOUR-DOMAIN` and the build

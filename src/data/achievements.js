@@ -23,7 +23,7 @@ export const achievements = [
     id: 'badminton',
     kind: 'Sport · Participation',
     title: 'KSS Inter-School Badminton',
-    period: 'September 8–10 · CBSE Kanpur Sahodaya Schools',
+    period: 'September 8–10, 2022 · CBSE Kanpur Sahodaya Schools',
     accent: 'indigo',
     span: 'normal',
     body: 'Represented school at the KSS inter-school badminton competition organised by CBSE Kanpur Sahodaya Schools, hosted at Scholar Mission School, Kanpur. Participation.',

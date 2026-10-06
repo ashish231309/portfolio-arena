@@ -66,7 +66,7 @@ Rules
 
 ## 7. Cursor system (fine pointers only)
 - Dot 6px ink (ivory on dark via mix-blend-difference), ring 34px 1.5px border trailing with spring lag, 4 ghost afterimages with progressively softer springs (trail).
-- States via `data-cursor`: `link` (ring 44px), `button`/magnetic (ring 44px + fill tint), `project` (72px disc, label "VIEW"), `cert` (disc "OPEN"), `contact` (disc "LET'S TALK"), `drag` (disc "SCROLL →" on rails).
+- States via `data-cursor`: `link` (ring 44px), `button`/magnetic (ring 44px + fill tint), `project` (72px disc, label "VIEW"), `cert` (disc "OPEN"), `contact` (disc "LET'S TALK"), `drag` (disc "SWIPE →" on rails).
 - Hidden on touch/coarse pointer and when `prefers-reduced-motion`; native cursor restored for text inputs.
 - Ambient glow: fixed 520px blurred radial @ 8–12% opacity following cursor with heavy lag; color = current section accent (animated CSS var).
 
@@ -81,4 +81,4 @@ Rules
 - 768: two-column where meaningful; 1024+: full choreography; 1440+: container capped, type scales via clamp only.
 
 ## 10. Performance
-- MotionValues/springs + transform/opacity only; pointer events write to refs/motion values (no React state per move); images lazy (`loading="lazy"`, `decoding="async"`); single blur layer; Lenis rAF paused when tab hidden; no video.
+- MotionValues/springs + transform/opacity only; pointer events write to refs/motion values (no React state per move); images lazy (`loading="lazy"`, `decoding="async"`); single blur layer; Lenis stopped/started on `visibilitychange` (rAF loop keeps ticking but the engine is idle); no video.

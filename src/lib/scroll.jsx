@@ -29,11 +29,19 @@ export function LenisProvider({ children }) {
     }
     const instance = new Lenis({ lerp: 0.1, smoothWheel: true })
     setLenis(instance)
+    // Pause while the tab is hidden (DESIGN.md §10): stop the engine and skip
+    // its rAF work, then resume exactly where it left off on return.
+    const onVisibility = () => {
+      if (document.hidden) instance.stop()
+      else instance.start()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
     let raf = requestAnimationFrame(function loop(time) {
-      instance.raf(time)
+      if (!document.hidden) instance.raf(time)
       raf = requestAnimationFrame(loop)
     })
     return () => {
+      document.removeEventListener('visibilitychange', onVisibility)
       cancelAnimationFrame(raf)
       instance.destroy()
     }

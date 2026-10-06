@@ -128,7 +128,7 @@ function checkPdf(buf) {
     } else {
       found.push(`trailer references an Info object (${n} 0 R)`)
     }
-  } else if (/\/Info\s*[<\[]/.test(s)) {
+  } else if (/\/Info\s*[<[]/.test(s)) {
     found.push('Info dictionary')
   }
 

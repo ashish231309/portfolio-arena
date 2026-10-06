@@ -1,9 +1,74 @@
 import { chromium } from 'playwright'
+import { mkdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { join } from 'node:path'
 
-const BASE = 'http://localhost:5173'
-const out = (n) => `/home/user/qa/${n}.png`
+/**
+ * QA screenshot pass. Run the dev server first, then `npm run qa`.
+ *
+ *   npm run dev            # terminal 1
+ *   npm run qa             # terminal 2
+ *
+ * Screenshots land in `qa/screens/` (gitignored). Point it at another origin
+ * with `QA_BASE=http://localhost:4173 npm run qa` for a `npm run preview` build.
+ */
+const BASE = process.env.QA_BASE || 'http://localhost:5173'
+// Output lives inside the repo, next to this script — never an absolute home path.
+const OUT_DIR = fileURLToPath(new URL('./screens/', import.meta.url))
+mkdirSync(OUT_DIR, { recursive: true })
+const out = (n) => join(OUT_DIR, `${n}.png`)
+
+/**
+ * Horizontal-overflow probe.
+ *
+ * `body { overflow-x: clip }` (src/index.css) stops `scrollWidth` from ever
+ * growing — on the document element AND on body — so a scrollWidth delta alone
+ * reports 0 even when something really sticks out past the viewport. We still
+ * record those numbers, but the gate is the element scan below: any box whose
+ * rect crosses the viewport edge with no scrollable/clipping ancestor of its
+ * own is real overflow (the credential rail is contained by its own scroller,
+ * so it never trips this).
+ */
+const measureOverflow = (page) =>
+  page.evaluate(() => {
+    const vw = window.innerWidth
+    const doc = document.documentElement
+    const body = document.body
+    const contained = (el) => {
+      for (let p = el.parentElement; p && p !== doc; p = p.parentElement) {
+        const cs = getComputedStyle(p)
+        const ox = cs.overflowX
+        if (ox === 'auto' || ox === 'scroll' || ox === 'hidden' || ox === 'clip') {
+          const pr = p.getBoundingClientRect()
+          if (pr.right <= vw + 1 && pr.left >= -1) return true
+        }
+      }
+      return false
+    }
+    const offenders = []
+    for (const el of body.querySelectorAll('*')) {
+      const cs = getComputedStyle(el)
+      // Decorative layers (glows, marquee ghosts) are pointer-events:none + aria-hidden.
+      if (cs.pointerEvents === 'none' && el.closest('[aria-hidden="true"]')) continue
+      const r = el.getBoundingClientRect()
+      if (r.width < 2 || r.height < 2) continue
+      if (r.right <= vw + 1 && r.left >= -1) continue
+      if (contained(el)) continue
+      const cls = typeof el.className === 'string' ? el.className.trim().split(/\s+/).slice(0, 2).join('.') : ''
+      offenders.push(`${el.tagName.toLowerCase()}${cls ? `.${cls}` : ''} [${Math.round(r.left)}→${Math.round(r.right)}]`)
+      if (offenders.length >= 5) break
+    }
+    return {
+      viewport: vw,
+      docOverflow: Math.round(doc.scrollWidth - vw),
+      bodyOverflow: Math.round(body.scrollWidth - vw),
+      bodyRectWidth: Math.round(body.getBoundingClientRect().width),
+      offenders,
+    }
+  })
 
 const browser = await chromium.launch()
+const failures = []
 
 async function shoot(name, { width, height, path = '/', steps = [], full = false }) {
   const ctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1 })
@@ -19,8 +84,15 @@ async function shoot(name, { width, height, path = '/', steps = [], full = false
     await page.waitForTimeout(step.wait || 1200)
   }
   await page.screenshot({ path: out(name), fullPage: full })
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
-  console.log(`${name}: overflowX=${overflow}px errors=${errors.length ? errors.slice(0, 3).join(' | ') : 'none'}`)
+  const o = await measureOverflow(page)
+  const bad = o.offenders.length > 0 || o.bodyOverflow > 1 || o.docOverflow > 1
+  if (bad) failures.push(`${name} (${path} @${width}px): ${o.offenders.join(', ') || `scrollWidth +${Math.max(o.bodyOverflow, o.docOverflow)}px`}`)
+  if (errors.length) failures.push(`${name}: ${errors.slice(0, 3).join(' | ')}`)
+  console.log(
+    `${name} [${width}px ${path}] overflowX: doc=${o.docOverflow}px body=${o.bodyOverflow}px` +
+      `${o.offenders.length ? ` OFFENDERS: ${o.offenders.join(', ')}` : ' clean'}` +
+      ` errors=${errors.length ? errors.slice(0, 3).join(' | ') : 'none'}`,
+  )
   await ctx.close()
 }
 
@@ -34,8 +106,10 @@ await shoot('home-certs', { width: 1440, height: 900, path: '/', steps: [{ selec
 await shoot('home-achievements', { width: 1440, height: 900, path: '/', steps: [{ selector: '#achievements', wait: 1400 }] })
 await shoot('home-contact', { width: 1440, height: 900, path: '/', steps: [{ selector: '#contact', wait: 1400 }] })
 
-// project detail
+// project detail — BOTH projects (the S1 mix-up class of bug: a page showing
+// the other project's screenshots; see tests/smoke.spec.js for the hard assert)
 await shoot('project-cn', { width: 1440, height: 900, path: '/projects/coding-ninjas', steps: [{ scroll: 900, wait: 1400 }] })
+await shoot('project-bmw', { width: 1440, height: 900, path: '/projects/bmw', steps: [{ scroll: 900, wait: 1400 }] })
 
 // mobile
 await shoot('mob-hero', { width: 390, height: 844, path: '/' })
@@ -48,4 +122,11 @@ for (const [w, h] of [[320, 700], [375, 800], [430, 900], [768, 1024], [1024, 80
 }
 
 await browser.close()
-console.log('QA complete')
+
+if (failures.length) {
+  console.error(`\nQA FAILED — ${failures.length} problem(s):`)
+  for (const f of failures) console.error(`  · ${f}`)
+  process.exitCode = 1
+} else {
+  console.log(`\nQA complete — screenshots in qa/screens/, no overflow or console errors detected`)
+}
