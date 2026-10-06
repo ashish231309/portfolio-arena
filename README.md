@@ -41,6 +41,41 @@ npm run preview  # preview the build
 | `/achievements` | NCC, sport, coordination activities |
 | `/contact` | Contact form (FormSubmit), email, socials |
 
+Any other URL is handled by the in-app 404 (`src/pages/NotFound.jsx`), described below.
+
+## Failure surfaces (404s & errors)
+
+There are three of them, and they deliberately share one design language: ink `#10162B` background,
+coral mono micro-label, a “never shipped” headline, and a lime **Back to home** button.
+
+| Surface | File | When it appears |
+|---|---|---|
+| In-app 404 | `src/pages/NotFound.jsx` (`path="*"`) | Any unknown URL once the app has loaded — e.g. `/nope`, `/projects/typo` |
+| Static 404 | `public/404.html` | Served by the host for a missing URL when the SPA rewrite doesn't apply, and reachable directly at `/404.html`. Self-contained: inline CSS, no scripts, no external requests, so it still renders if JavaScript never loads |
+| Error fallback | `src/components/ErrorBoundary.jsx` | A runtime render error in any route — keeps the navbar and footer, offers *Reload the page* / *Back to home* |
+
+Deep links (e.g. `/projects/bmw` opened directly, or refreshed) work because `vercel.json` rewrites
+every path to `/index.html`, and the app's router then resolves the route client-side:
+
+```json
+{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
+```
+
+Real files still win over the rewrite, so `/404.html`, `/resume.pdf`, `/projects/**` and
+`/certificates/**` are served as-is.
+
+**Test these locally** (the dev server already falls back to `index.html`, so use the real build):
+
+```bash
+npm run build && npm run preview     # http://localhost:4173
+```
+
+- `/projects/bmw` → the BMW case study must load (not a 404) — proves the deep link works.
+- `/nope` → the branded in-app 404 (“This page never shipped.”).
+- `/404.html` → the static 404 on its own; disable JavaScript and reload — it is still readable.
+
+`npm run check:meta` (see *Where assets live*) is unrelated but cheap; run it after touching assets.
+
 ## Where personal data lives
 
 All content is data-driven — edit these files, never the components:
