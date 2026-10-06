@@ -43,7 +43,7 @@ export const achievements = [
     id: 'coordination',
     kind: 'Leadership · School',
     title: 'Inter-House Badminton Coordination',
-    period: 'Army Public School, Kanpur',
+    period: 'November 12–13, 2022 · Army Public School, Kanpur',
     accent: 'cyan',
     span: 'wide',
     body: 'Given the opportunity by my sports teacher, I helped host and coordinate the inter-house badminton competition: match schedules, who played whom, match flow — and officiating as referee through the finals.',
