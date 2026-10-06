@@ -505,13 +505,13 @@ TASKS
      alias/hashed endpoint form so the literal address does not appear in the built JS.
    - BINDING CORRECTION C1 still applies: do NOT add any third-party disclosure line under the form.
    - Add .env.example documenting VITE_CONTACT_ENDPOINT (and ensure .gitignore from S0 already covers .env*).
-   - Verify by grepping the built bundle: `grep -r "ashish1492a@gmail" dist/` must return nothing.
+   - Verify by grepping the built bundle: `grep -r "<the inbox address>" dist/` must return nothing.
 
 ACCEPTANCE CRITERIA
 - Built dist/index.html contains the new meta tags; canonical + og:image resolve to real files.
 - robots.txt + sitemap.xml are present in dist/ and syntactically valid.
 - Manifest + apple icon present and linked; Lighthouse-style checks would not error on them.
-- `grep -r "ashish1492a@gmail" dist/` returns nothing while the form still posts successfully
+- `grep -r "<the inbox address>" dist/` returns nothing while the form still posts successfully
   (test the request path or explain exactly how to activate the alias).
 - Home route keeps the rich static title/description (show the rendered <title> + meta for '/').
 - `npm run build` succeeds; nothing else changes visually.

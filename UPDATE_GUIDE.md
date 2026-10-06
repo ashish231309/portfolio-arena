@@ -52,7 +52,19 @@ Replace `public/resume.pdf`. Filename must stay `resume.pdf` (CTAs point to it).
 - Section background rhythm: each `<Section bg=... accent=...>` in `src/sections/*` and `src/pages/*`
 
 ## 9. Contact form
-`src/sections/Contact.jsx` → `FORM_ENDPOINT`. Swap provider freely (Web3Forms/EmailJS) but keep: validation, honeypot, loading/success/error states, no secrets in the bundle.
+`src/sections/Contact.jsx` → `FORM_ALIAS`. The form posts to
+`https://formsubmit.co/ajax/<alias>` — a FormSubmit *alias*, not the inbox address.
+The mailbox address deliberately does not exist anywhere in this repository or in the
+built bundle (`grep -r "@gmail" dist/` returns nothing), so address-harvesting bots get
+nothing from the shipped files.
+
+To change where messages go:
+1. Put the new address in the form once, from the deployed site, and confirm the email
+   FormSubmit sends you.
+2. FormSubmit then gives you a random alias string — paste it into `FORM_ALIAS`.
+3. Or override per environment with `VITE_CONTACT_ENDPOINT` (see `.env.example`).
+
+Keep: validation, honeypot, loading/success/error states, no secrets in the bundle.
 
 ## 10. Before publishing any change — checklist
 - [ ] Is every claim supported by a supplied source (resume/certificate/repo)?
@@ -61,3 +73,21 @@ Replace `public/resume.pdf`. Filename must stay `resume.pdf` (CTAs point to it).
 - [ ] No physical certificate files added to `public/`?
 - [ ] `npm run build` passes?
 - [ ] Checked at 375px and 1440px (no overflow, no clipped type)?
+
+## 11. Deploy settings (SEO, share previews, install)
+
+Two environment variables, both optional but recommended — set them in
+Vercel → Project → Settings → Environment Variables (or a local `.env`, see `.env.example`):
+
+| variable | what it does | if it is missing |
+|---|---|---|
+| `VITE_SITE_ORIGIN` | the deployed origin, e.g. `https://your-domain.com`. Builds canonical, `og:url`, `og:image`, `robots.txt` and every URL in `sitemap.xml`. | they all say `https://REPLACE-WITH-YOUR-DOMAIN`, and the build prints a warning |
+| `VITE_CONTACT_ENDPOINT` | overrides the FormSubmit alias for a staging build | the alias in `src/sections/Contact.jsx` is used |
+
+After changing `VITE_SITE_ORIGIN`, redeploy so the files are regenerated. Verify with:
+`grep -c REPLACE-WITH-YOUR-DOMAIN dist/index.html dist/robots.txt dist/sitemap.xml` → all `0`.
+
+### Regenerating the share image / icons
+`python3 audit/tools/generate-social-assets.py` rebuilds `public/og-cover.png`,
+`public/apple-touch-icon.png` and `public/icons/*` from the site's own fonts, palette and
+`favicon.svg`. Add `--variant b` for the version with a framed project screenshot in it.

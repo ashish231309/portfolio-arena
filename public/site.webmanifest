@@ -1,0 +1,35 @@
+{
+  "name": "Ashish Kumar — Computer Science Student · Software, Web & Generative AI",
+  "short_name": "Ashish Kumar",
+  "description": "Portfolio of Ashish Kumar: React projects, web recreations, Generative AI learning, internships, certifications and activities — Kanpur, India.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#F6F2E8",
+  "background_color": "#F6F2E8",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["portfolio", "education", "technology"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

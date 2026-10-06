@@ -17,10 +17,10 @@ function SectionsFallback() {
 }
 
 export default function Home() {
-  usePageMeta(
-    null,
-    'Portfolio of Ashish Kumar — Computer Science student in Kanpur building with software, web & Generative AI.',
-  )
+  // Deliberately no title/description: index.html already carries the full static
+  // title and description for '/', and this hook must not overwrite them (T27).
+  // It still keeps canonical + og:url pointed at the current URL.
+  usePageMeta()
   return (
     <>
       <Hero />

@@ -26,6 +26,12 @@ npm run build    # production build → dist/
 npm run preview  # preview the build
 ```
 
+For local/production SEO tags, copy `.env.example` to `.env` and set `VITE_SITE_ORIGIN`
+to the deployed origin. Without it, every absolute URL (canonical, `og:image`,
+`robots.txt`, `sitemap.xml`) points at `https://REPLACE-WITH-YOUR-DOMAIN` and the build
+warns. `robots.txt` and `sitemap.xml` are generated from that value plus
+`src/data/projects.js`, so they can never drift out of sync with the site.
+
 ## Routes
 
 | Route | Content |
@@ -113,7 +119,7 @@ public/favicon.svg                      brand mark
 
 ## Contact form
 
-Uses [FormSubmit](https://formsubmit.co) AJAX endpoint (`src/sections/Contact.jsx`) — no secrets in frontend code, honeypot spam protection, inline validation, loading/success/error states. The first submission sends an activation email to the inbox owner once.
+Posts to a [FormSubmit](https://formsubmit.co) AJAX endpoint (`src/sections/Contact.jsx`) using a FormSubmit **alias** — the alias routes to the owner's inbox without the mailbox address appearing anywhere in the repository or in the built bundle. Honeypot spam protection, inline validation, loading/success/error states, and a 10 s request cap. Override the destination with `VITE_CONTACT_ENDPOINT` (see `.env.example`).
 
 ## Updating content — quick guide
 

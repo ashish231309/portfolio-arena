@@ -42,14 +42,15 @@ export default function Footer() {
                 </Magnetic>
               ))}
               <Magnetic strength={0.3} max={5}>
-                <a
-                  href={`mailto:${profile.email}`}
-                  aria-label="Email Ashish"
+                {/* T20: no address in the markup — the icon points at the contact form. */}
+                <Link
+                  to="/contact"
+                  aria-label="Contact Ashish — use the form"
                   data-cursor="link"
                   className="grid place-items-center w-10 h-10 rounded-full border border-ivory/20 text-ivory/80 transition-colors duration-300 hover:border-lime hover:text-lime"
                 >
                   <Mail size={16} aria-hidden="true" />
-                </a>
+                </Link>
               </Magnetic>
             </div>
           </div>
@@ -71,7 +72,7 @@ export default function Footer() {
             <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-fog mb-4">Elsewhere</p>
             <ul className="space-y-2 text-sm text-ivory/75">
               <li><a data-cursor="link" className="underline-slide" href={profile.resume} download="Ashish-Kumar-Resume.pdf">Download resume</a></li>
-              <li><a data-cursor="link" className="underline-slide" href={`mailto:${profile.email}`}>{profile.email}</a></li>
+              <li><Link to="/contact" data-cursor="link" className="underline-slide">Contact form</Link></li>
               <li className="pt-2 font-mono text-[11px] tracking-[0.16em] text-fog">{profile.coordinates}</li>
               <li className="font-mono text-[11px] tracking-[0.16em] text-fog">{profile.location}</li>
             </ul>

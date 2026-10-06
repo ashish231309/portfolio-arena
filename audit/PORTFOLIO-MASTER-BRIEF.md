@@ -129,7 +129,7 @@ audit/                         THIS DOCUMENTATION SET (untracked; safe to delete
 | ID | Finding |
 |---|---|
 | A1 | 5 high dev-only advisories (Tailwind 3 tooling chain). Shipped tree clean. Only fix = Tailwind 4 (breaking) → stage S10 |
-| A2 | Contact form: recipient Gmail is in the public bundle (`https://formsubmit.co/ajax/ashish1492a@gmail.com`); no request timeout → button can hang on "Sending…" |
+| A2 | Contact form: recipient Gmail is in the public bundle (`https://formsubmit.co/ajax/<the inbox address>` (redacted here in S7 — see T20)); no request timeout → button can hang on "Sending…" |
 | A3 | PDF metadata (see §7). **User decision C2: strip metadata from EVERY file** → stage S2 |
 | A4 | No error boundary: any runtime error or failed JS chunk = blank white page → stage S0 |
 

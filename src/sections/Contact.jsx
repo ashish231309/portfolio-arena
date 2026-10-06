@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowUpRight, Loader2, CheckCircle2, AlertCircle, Mail, Send } from 'lucide-react'
+import { ArrowUpRight, Loader2, CheckCircle2, AlertCircle, Send } from 'lucide-react'
 import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade, WordReveal } from '../components/Reveal'
@@ -8,7 +8,15 @@ import Magnetic from '../components/Magnetic'
 import { profile } from '../data/profile'
 import { EASE } from '../lib/motion'
 
-const FORM_ENDPOINT = 'https://formsubmit.co/ajax/ashish1492a@gmail.com'
+// T20 — the recipient address no longer exists in this bundle. Messages go to a
+// FormSubmit *alias* (the random string FormSubmit issues once the address is
+// confirmed): the alias routes to the same inbox, but nothing in the served files
+// names the mailbox, so address-harvesting bots come away empty-handed.
+//
+// Override it per environment with VITE_CONTACT_ENDPOINT (see .env.example) — e.g.
+// to point a staging build somewhere else without touching this file.
+const FORM_ALIAS = 'dbcb9c89ab8b18aaa83b8792882d8a96'
+const FORM_ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT || `https://formsubmit.co/ajax/${FORM_ALIAS}`
 // A2: never leave the button stuck on "Sending…" — 10 s cap on the request.
 const FORM_TIMEOUT_MS = 10000
 
@@ -207,8 +215,8 @@ function ContactForm() {
           )}
           {state === 'error' && (
             <span className="inline-flex items-center gap-2 text-coral">
-              <AlertCircle size={15} aria-hidden="true" /> Something broke — email me at{' '}
-              <strong className="font-semibold">{profile.email}</strong>, in the left column.
+              <AlertCircle size={15} aria-hidden="true" /> Something broke on my end — try again, or{' '}
+              <strong className="font-semibold">reach me on LinkedIn or GitHub</strong> below.
             </span>
           )}
         </p>
@@ -252,11 +260,11 @@ export default function Contact({ bare = false }) {
             <Fade delay={0.2} y={16}>
               <Magnetic strength={0.25} max={8}>
                 <a
-                  href={`mailto:${profile.email}`}
+                  href="#cf-name"
                   data-cursor="contact"
                   className="mt-8 inline-flex items-center gap-3 rounded-full bg-lime px-7 py-4 font-mono text-[13px] tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-[#b8e356]"
                 >
-                  <Mail size={16} aria-hidden="true" /> {profile.email}
+                  <Send size={16} aria-hidden="true" /> Or fill the form
                 </a>
               </Magnetic>
             </Fade>

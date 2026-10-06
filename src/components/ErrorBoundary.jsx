@@ -123,8 +123,15 @@ export default class ErrorBoundary extends Component {
               margin: '34px 0 0',
             }}
           >
-            <a href={`mailto:ashish1492a@gmail.com`} style={{ color: '#27D3F2' }}>
-              ashish1492a@gmail.com
+            {/* T20: the address is not shipped in the bundle any more. These two
+                links are hard-coded on purpose — this screen has to render even if
+                the app's own data modules are what failed. */}
+            <a href="https://github.com/ashish1492a" style={{ color: '#27D3F2' }} target="_blank" rel="noreferrer">
+              github.com/ashish1492a
+            </a>{' '}
+            or{' '}
+            <a href="https://linkedin.com/in/ashish-kumar-52507641b" style={{ color: '#27D3F2' }} target="_blank" rel="noreferrer">
+              LinkedIn
             </a>{' '}
             — tell me what you clicked and I&apos;ll fix it.
           </p>

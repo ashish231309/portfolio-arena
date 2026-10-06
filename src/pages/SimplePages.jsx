@@ -79,7 +79,7 @@ export function AchievementsPage() {
 }
 
 export function ContactPage() {
-  usePageMeta('Contact', 'Email, socials and a working contact form — reach Ashish Kumar for internships, collaborations or conversations.')
+  usePageMeta('Contact', 'Socials and a working contact form — reach Ashish Kumar for internships, collaborations or conversations.')
   return (
     <Section bg="ivory" accent="lime" className="pb-0"
       intro={

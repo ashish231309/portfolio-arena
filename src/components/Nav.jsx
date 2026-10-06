@@ -233,7 +233,7 @@ export default function Nav() {
               <a className="underline-slide" href={profile.social.github} target="_blank" rel="noreferrer">GitHub</a>
               <a className="underline-slide" href={profile.social.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
               <a className="underline-slide" href={profile.social.instagram} target="_blank" rel="noreferrer">Instagram</a>
-              <a className="underline-slide text-lime" href={`mailto:${profile.email}`}>{profile.email}</a>
+              <Link className="underline-slide text-lime" to="/contact">Get in touch</Link>
             </motion.div>
           </motion.div>
         )}

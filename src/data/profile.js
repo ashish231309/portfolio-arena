@@ -5,7 +5,8 @@ export const profile = {
   headline: 'Computer Science Student building with Software, Web & Generative AI',
   location: 'Kanpur, India',
   coordinates: '26.449°N, 80.339°E',
-  email: 'ashish1492a@gmail.com',
+  // The contact address deliberately does not live in the bundle (T20): the form
+  // posts to a FormSubmit alias and the socials below are the public contact routes.
   status: 'B.Tech CSE · 7th semester / final year · graduating 2027',
   social: {
     github: 'https://github.com/ashish1492a',
