@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+@config "../tailwind.config.js";
+@source "../index.html";
+@source "./**/*.{js,jsx}";
 
 :root {
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -8,6 +9,11 @@
 }
 
 @layer base {
+  /* Tailwind 4 preflight defaults border-color to currentColor; restore the
+     v3 default (gray-200) so existing borders keep their appearance. */
+  *, ::before, ::after, ::backdrop, ::file-selector-button {
+    border-color: #e5e7eb;
+  }
   html {
     -webkit-text-size-adjust: 100%;
   }
@@ -101,6 +107,11 @@
   .edge-fade-x {
     mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
   }
+
+  /* v4 emits gradients with --tw-gradient-position; keep the v3
+     bg-gradient-to-* class names used in the markup working as-is */
+  .bg-gradient-to-r { --tw-gradient-position: to right; }
+  .bg-gradient-to-b { --tw-gradient-position: to bottom; }
 }
 
 /* Lenis recommended styles */
