@@ -66,7 +66,7 @@ export default function Achievements({ bare = false }) {
   const H = bare ? 'h2' : 'h3'
 
   return (
-    <Wrapper id="achievements" bg="ivory" accent="lime" className={sectionPadding}>
+    <Wrapper id="achievements" bg="ivory" accent="lime" className={sectionPadding} {...(!bare ? { labelledBy: 'achievements-title' } : {})}>
       <div className={container}>
         {!bare && (
           <SectionHead

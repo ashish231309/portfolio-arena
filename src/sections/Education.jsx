@@ -4,7 +4,7 @@ import { GraduationCap, School } from 'lucide-react'
 import Section, { container, sectionPadding, SectionSurface } from '../components/Section'
 import SectionHead from '../components/SectionHead'
 import { Fade } from '../components/Reveal'
-import { education, } from '../data/education'
+import { education } from '../data/education'
 import { coursework } from '../data/skills'
 import { spellNumber, capitalize } from '../lib/format'
 
@@ -69,7 +69,7 @@ export default function Education({ bare = false }) {
   const H = bare ? 'h2' : 'h3'
 
   return (
-    <Wrapper id="education" bg="tint" accent="indigo" className={sectionPadding}>
+    <Wrapper id="education" bg="tint" accent="indigo" className={sectionPadding} {...(!bare ? { labelledBy: 'education-title' } : {})}>
       <div className={container}>
         {!bare && (
           <SectionHead index="05" title={educationHeadline} note="Education" accent="indigo" id="education-title" />

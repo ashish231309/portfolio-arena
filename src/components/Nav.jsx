@@ -148,6 +148,7 @@ export default function Nav() {
                   to={l.to}
                   data-cursor="link"
                   className={({ isActive }) => `underline-slide py-1 ${isActive ? 'active ' + (dark ? 'text-ivory' : 'text-ink') : ''}`}
+                  aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
                 >
                   {l.label}
                 </NavLink>
@@ -216,6 +217,7 @@ export default function Nav() {
                       className={({ isActive }) =>
                         `flex items-center justify-between py-2 font-display font-bold tracking-tighter2 text-[clamp(2rem,9vw,3rem)] ${isActive ? 'text-cyan' : 'text-ivory'}`
                       }
+                      aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
                     >
                       {l.label}
                       <ArrowUpRight size={20} className="text-fog" aria-hidden="true" />
@@ -233,6 +235,7 @@ export default function Nav() {
               <a className="underline-slide" href={profile.social.github} target="_blank" rel="noreferrer">GitHub</a>
               <a className="underline-slide" href={profile.social.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
               <a className="underline-slide" href={profile.social.instagram} target="_blank" rel="noreferrer">Instagram</a>
+              <a className="underline-slide" href={profile.resume} download="Ashish-Kumar-Resume.pdf">Resume</a>
               <Link className="underline-slide text-lime" to="/contact">Get in touch</Link>
             </motion.div>
           </motion.div>

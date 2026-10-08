@@ -4,96 +4,155 @@ import { ArrowRight, ArrowDown, GitCommitHorizontal } from 'lucide-react'
 import { profile } from '../data/profile'
 import Section, { container } from '../components/Section'
 import Magnetic from '../components/Magnetic'
-import { MaskLines, Fade, Parallax } from '../components/Reveal'
+import { MaskLines, Fade } from '../components/Reveal'
 import { useSite } from '../lib/site'
 import { useFinePointer, useReducedMotionPref } from '../hooks/useMediaQuery'
 import { useViewport } from '../hooks/useViewport'
 
+/**
+ * U15: Orbit visual — the only changes from the original are:
+ *   1. A dark rounded bg-deep card (same #121A2D navy used by Skills/Certs)
+ *      fills the right column with a very thin margin, matching the user's
+ *      hand-drawn outline.
+ *   2. Card tilts gently in 3D with the pointer (board-on-a-marble feel).
+ *   3. AK core is now a perfect circle (slightly smaller) instead of a square.
+ *   4. SW / WEB / GENAI pills ride on their respective rotating rings so they
+ *      orbit exactly like the coloured dots do.
+ *   5. Crosshair signal lines are removed.
+ *   6. The two floating code chips live inside the card.
+ * Everything else (ring speeds, sizes, pill styling, grid texture) stays as
+ * close as possible to the original.
+ */
 function OrbitVisual() {
   const { px, py } = useSite()
   const fine = useFinePointer()
   const reduced = useReducedMotionPref()
-  // Viewport via hook (never read during render): SSR/prerender safe and the
-  // tilt range follows the window after a resize instead of freezing.
   const { width, height } = useViewport()
-  const rotateX = useSpring(useTransform(py, [0, height], [7, -7]), { stiffness: 90, damping: 18 })
-  const rotateY = useSpring(useTransform(px, [0, width], [-9, 9]), { stiffness: 90, damping: 18 })
+  // Very slight, smooth tilt.
+  const rotateX = useSpring(useTransform(py, [0, height], [3, -3], { clamp: true }), { stiffness: 70, damping: 24 })
+  const rotateY = useSpring(useTransform(px, [0, width], [-4, 4], { clamp: true }), { stiffness: 70, damping: 24 })
 
-  const nodes = [
-    { label: 'SW', angle: 0, color: '#6C5CE7', r: 46 },
-    { label: 'WEB', angle: 120, color: '#27D3F2', r: 34 },
-    { label: 'GENAI', angle: 240, color: '#FF6B6B', r: 22 },
-  ]
+  // Each pill rides on a specific ring, matching the dots:
+  //  • SW  — outer purple ring  (r=92, 40s spin-slow, same as the purple dot)
+  //  • WEB — middle cyan ring   (r=68, 28s spin-rev,  same as the cyan dot)
+  //  • GENAI — inner coral ring (r=44, 22s spin-slow, same as the coral dot)
+  // Pills in the SVG are drawn at the same visual size as the original HTML
+  // pills (≈10px monospace, px-2 py-1 padding, rounded-full) — just converted
+  // to SVG units.
+  const pill = (label, color, cx, cy, rotDeg) => {
+    // Pill dimensions in SVG user units for an ≈10px monospace label.
+    const w = 28
+    const h = 12
+    return (
+      <g transform={`translate(${cx},${cy}) rotate(${rotDeg})`}>
+        <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={h / 2} ry={h / 2}
+          fill="#FFFCF5" stroke={color} strokeOpacity="0.55" strokeWidth="0.6" />
+        <text x={0} y={3.2} textAnchor="middle"
+          fontFamily="ui-monospace,SFMono-Regular,Menlo,monospace"
+          fontSize="6.2" letterSpacing="1.2" fill={color}
+          style={{ textTransform: 'uppercase', fontWeight: 600 }}>
+          {label}
+        </text>
+      </g>
+    )
+  }
+
+  const tiltStyle = fine && !reduced ? { rotateX, rotateY, transformPerspective: 1000 } : undefined
 
   return (
-    <motion.div
-      className="relative mx-auto w-full max-w-[430px] aspect-square"
-      style={fine && !reduced ? { rotateX, rotateY, transformPerspective: 900 } : undefined}
-      aria-hidden="true"
-    >
-      {/* rings */}
-      <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-slow motion-reduce:animate-none">
-        <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(16,22,43,0.16)" strokeWidth="0.6" strokeDasharray="3 5" />
-        <circle cx="100" cy="4" r="2.6" fill="#6C5CE7" />
-      </svg>
-      <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-rev motion-reduce:animate-none">
-        <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(108,92,231,0.4)" strokeWidth="0.7" strokeDasharray="1 4" />
-        <circle cx="100" cy="32" r="2.2" fill="#27D3F2" />
-      </svg>
-      <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-slow motion-reduce:animate-none" style={{ animationDuration: '22s' }}>
-        <circle cx="100" cy="100" r="44" fill="none" stroke="rgba(255,107,107,0.45)" strokeWidth="0.7" strokeDasharray="8 6" />
-        <circle cx="144" cy="100" r="2" fill="#FF6B6B" />
-      </svg>
+    <div className="relative mx-auto w-full max-w-[430px] aspect-square">
+      <motion.div
+        className="absolute inset-1 rounded-[28px] bg-deep shadow-[0_28px_60px_-28px_rgba(16,22,43,0.5)] overflow-hidden"
+        style={tiltStyle}
+        aria-hidden="true"
+      >
+        {/* subtle grid texture matching bg-grid-dark (same as Skills/Certs) */}
+        <div className="absolute inset-0 bg-grid-dark opacity-50" />
 
-      {/* signal line from core */}
-      <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full">
-        <path d="M100 100 L 176 62" stroke="rgba(16,22,43,0.25)" strokeWidth="0.6" strokeDasharray="4 4" className="animate-dash-flow motion-reduce:animate-none" />
-        <path d="M100 100 L 34 148" stroke="rgba(16,22,43,0.25)" strokeWidth="0.6" strokeDasharray="4 4" className="animate-dash-flow motion-reduce:animate-none" />
-      </svg>
+        {/* soft cursor-following indigo glow inside the card */}
+        <CardGlow accent="rgba(108,92,231,0.24)" />
 
-      {/* core */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="relative grid place-items-center w-24 h-24 rounded-md2 bg-ink text-ivory shadow-panel">
-          <span className="font-display font-bold text-2xl tracking-tighter2">AK</span>
-          <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-lime animate-pulse-dot" />
+        {/* outer purple ring (40s, spin-slow) with SW pill + purple dot */}
+        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-slow motion-reduce:animate-none">
+          <defs>
+            <pattern id="od" width="8" height="8" patternUnits="userSpaceOnUse" />
+          </defs>
+          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(108,92,231,0.35)" strokeWidth="0.6" strokeDasharray="3 5" />
+          <circle cx="100" cy="8" r="2.6" fill="#6C5CE7" />
+          {pill('SW', '#6C5CE7', 100 + Math.cos((-10 * Math.PI) / 180) * 92, 100 + Math.sin((-10 * Math.PI) / 180) * 92, -10)}
+        </svg>
+
+        {/* middle cyan ring (28s, reverse) with WEB pill + cyan dot */}
+        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-rev motion-reduce:animate-none">
+          <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(39,211,242,0.4)" strokeWidth="0.7" strokeDasharray="1 4" />
+          <circle cx="100" cy="32" r="2.2" fill="#27D3F2" />
+          {pill('WEB', '#27D3F2', 100 + Math.cos((120 * Math.PI) / 180) * 68, 100 + Math.sin((120 * Math.PI) / 180) * 68, 120)}
+        </svg>
+
+        {/* inner coral ring (22s) with GENAI pill + coral dot */}
+        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" style={{ animation: 'spinSlow 22s linear infinite' }}>
+          <circle cx="100" cy="100" r="44" fill="none" stroke="rgba(255,107,107,0.45)" strokeWidth="0.7" strokeDasharray="8 6" />
+          <circle cx="144" cy="100" r="2" fill="#FF6B6B" />
+          {pill('GENAI', '#FF6B6B', 100 + Math.cos((240 * Math.PI) / 180) * 44, 100 + Math.sin((240 * Math.PI) / 180) * 44, 240)}
+        </svg>
+
+        {/* AK core — circular, slightly smaller than the original 96px square */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="relative grid place-items-center w-[72px] h-[72px] rounded-full bg-ink text-ivory shadow-[0_0_0_1px_rgba(246,242,232,0.1),0_10px_24px_-10px_rgba(108,92,231,0.55)]">
+            <span className="font-display font-bold text-xl tracking-tighter2">AK</span>
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-lime animate-pulse-dot" />
+          </div>
         </div>
-      </div>
 
-      {/* node labels */}
-      {nodes.map((n) => {
-        const rad = (n.angle * Math.PI) / 180
-        const x = 50 + Math.cos(rad) * n.r
-        const y = 50 + Math.sin(rad) * n.r
-        return (
-          <span
-            key={n.label}
-            className="absolute -translate-x-1/2 -translate-y-1/2 font-mono text-[10px] tracking-[0.2em] px-2 py-1 rounded-full border bg-paper"
-            style={{ left: `${x}%`, top: `${y}%`, color: n.color, borderColor: `${n.color}55` }}
-          >
-            {n.label}
-          </span>
-        )
-      })}
+        {/* code chips inside the card */}
+        <div className="absolute left-5 top-[11%] hidden sm:block">
+          <code className="block rounded-sm2 bg-paper/95 border border-ivory/15 px-3 py-2 font-mono text-[11px] text-muted shadow-lift">
+            <GitCommitHorizontal size={11} className="inline mr-1 text-indigo" aria-hidden="true" />
+            git commit -m &quot;learning&quot;
+          </code>
+        </div>
+        <div className="absolute right-5 bottom-[11%] hidden sm:block">
+          <code className="block rounded-md2 bg-ink/90 border border-ivory/10 px-3 py-2 font-mono text-[11px] text-cyan shadow-lift">
+            const curious = true<span className="animate-blink">_</span>
+          </code>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
 
-      {/* floating code fragments */}
-      <Parallax amount={18} className="absolute -left-6 top-[12%] hidden sm:block">
-        <code className="block rounded-sm2 bg-paper border border-ink/10 px-3 py-2 font-mono text-[11px] text-muted shadow-lift">
-          <GitCommitHorizontal size={11} className="inline mr-1 text-indigo" aria-hidden="true" />
-          git commit -m &quot;learning&quot;
-        </code>
-      </Parallax>
-      <Parallax amount={-14} className="absolute -right-2 bottom-[10%] hidden sm:block">
-        <code className="block rounded-sm2 bg-ink text-cyan px-3 py-2 font-mono text-[11px] shadow-lift">
-          const curious = true<span className="animate-blink">_</span>
-        </code>
-      </Parallax>
-    </motion.div>
+/** Cursor-following soft glow inside the orbit card (uses CSS vars like AmbientGlow). */
+function CardGlow({ accent }) {
+  const ref = (el) => { CardGlow._ref = el }
+  // Attach listener once per module load.
+  if (typeof window !== 'undefined' && !CardGlow._bound) {
+    CardGlow._bound = true
+    window.addEventListener('pointermove', (e) => {
+      const el = CardGlow._ref
+      if (!el) return
+      const r = el.getBoundingClientRect()
+      el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+      el.style.setProperty('--my', `${e.clientY - r.top}px`)
+    }, { passive: true })
+  }
+  const fine = useFinePointer()
+  const reduced = useReducedMotionPref()
+  if (reduced || !fine) return null
+  return (
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        background: `radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), ${accent}, transparent 65%)`,
+      }}
+    />
   )
 }
 
 export default function Hero() {
   return (
-    <Section id="top" bg="ivory" accent="indigo" grid className="min-h-[100svh] flex items-center">
+    <Section id="top" bg="ivory" accent="indigo" grid className="min-h-[100svh] flex items-center" labelledBy="hero-title">
       <div className={`${container} pt-28 md:pt-32 pb-16`}>
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           <div className="lg:col-span-7">
@@ -108,6 +167,7 @@ export default function Hero() {
 
             <MaskLines
               as="h1"
+              id="hero-title"
               delay={0.1}
               className="mt-6 font-display font-bold tracking-mega leading-[0.98] text-[clamp(2.75rem,7.6vw,6.4rem)]"
               lines={[

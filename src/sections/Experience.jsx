@@ -85,7 +85,7 @@ export default function Experience({ bare = false }) {
   const H = bare ? 'h2' : 'h3'
 
   return (
-    <Wrapper id="experience" bg="ivory" accent="coral" className={sectionPadding}>
+    <Wrapper id="experience" bg="ivory" accent="coral" className={sectionPadding} {...(!bare ? { labelledBy: 'experience-title' } : {})}>
       <div className={container}>
         {!bare && (
           <SectionHead index="04" title={['Work, internships', '& simulated sprints.']} note="Experience" accent="coral" id="experience-title" />

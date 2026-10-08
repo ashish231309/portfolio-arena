@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+  // U31: `content` is unused in Tailwind 4 — file sources are declared via
+  // `@source` directives in src/index.css (source(none) + explicit @source).
+  // Left out on purpose so future editors don't update the wrong place.
   theme: {
     extend: {
       colors: {

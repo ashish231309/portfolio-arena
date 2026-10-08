@@ -91,17 +91,25 @@ function ContactForm() {
   const [errors, setErrors] = useState({})
   const [state, setState] = useState('idle') // idle | sending | success | error
 
-  const set = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.value }))
+  // U16: clear success/error banner whenever the visitor starts editing again,
+  // so a previous status doesn't sit around looking stale.
+  const set = (k) => (e) => {
+    if (state !== 'idle') setState('idle')
+    setValues((v) => ({ ...v, [k]: e.target.value }))
+  }
 
   const onSubmit = async (e) => {
     e.preventDefault()
+    // U17: check the honeypot BEFORE running validation. If we validated first
+    // a bot would see "please write more" and learn the trap exists; we want it
+    // to see "sent" no matter what else is in the form.
+    if (values.honey) {
+      setState('success')
+      return
+    }
     const errs = validate(values)
     setErrors(errs)
     if (Object.keys(errs).length) return
-    if (values.honey) {
-      setState('success') // bot trap: pretend success
-      return
-    }
     setState('sending')
     try {
       await sendForm(values)
@@ -238,7 +246,7 @@ export default function Contact({ bare = false }) {
   ]
 
   return (
-    <Wrapper id="contact" bg="deeper" accent="lime" className={`${sectionPadding} relative`}>
+    <Wrapper id="contact" bg="deeper" accent="lime" className={`${sectionPadding} relative`} {...(!bare ? { labelledBy: 'contact-title' } : {})}>
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -bottom-6 left-0 right-0 text-center font-display font-bold tracking-mega text-[clamp(4rem,15vw,12rem)] text-ivory/[0.04] leading-none select-none"

@@ -14,7 +14,7 @@ const hoverBg = {
 
 export default function Skills({ bare = false }) {
   return (
-    <Section id="skills" bg="deep" accent="cyan" grid className={sectionPadding}>
+    <Section id="skills" bg="deep" accent="cyan" grid className={sectionPadding} labelledBy={bare ? undefined : 'skills-title'}>
       <div className={container}>
         {!bare && (
           <SectionHead
@@ -73,7 +73,6 @@ export default function Skills({ bare = false }) {
                     {g.skills.map((s) => (
                       <li key={s.name}>
                         <span
-                          data-cursor="link"
                           className={`group inline-flex flex-wrap items-baseline gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 ${
                             g.dashed ? 'border-dashed border-lime/50 text-lime' : 'border-ivory/20 text-ivory/85'
                           } ${hoverBg[g.accent] || hoverBg.indigo}`}

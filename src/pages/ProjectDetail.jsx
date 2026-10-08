@@ -41,7 +41,7 @@ export default function ProjectDetail() {
   return (
     <>
       {/* cinematic header */}
-      <Section bg="ink" accent="indigo" grid className="dark-zone">
+      <Section bg="ink" accent="indigo" grid className="dark-zone" labelledBy="project-detail-title">
         <div className={`${container} pt-36 md:pt-44 pb-[clamp(3rem,8vh,5.5rem)]`}>
           <Fade y={10} duration={0.5}>
             <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-[0.22em] uppercase text-fog">
@@ -55,6 +55,7 @@ export default function ProjectDetail() {
           </Fade>
           <MaskLines
             as="h1"
+            id="project-detail-title"
             delay={0.08}
             className="mt-6 font-display font-bold tracking-mega leading-[1.0] text-ivory text-[clamp(2.4rem,6.6vw,5.4rem)]"
             lines={project.title.split(' ').length > 4 ? [project.title.split(' ').slice(0, 2).join(' '), project.title.split(' ').slice(2).join(' ')] : [project.title]}

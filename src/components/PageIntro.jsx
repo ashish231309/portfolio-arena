@@ -4,7 +4,7 @@ import { container } from './Section'
 import { MaskLines, Fade } from './Reveal'
 
 /** Editorial page header for standalone routes. */
-export default function PageIntro({ index, title, lede, accent = 'indigo', crumb }) {
+export default function PageIntro({ index, title, lede, accent = 'indigo', crumb, id }) {
   const lines = Array.isArray(title) ? title : [title]
   return (
     <div className={`${container} pt-36 md:pt-44 pb-[clamp(2.5rem,6vh,4rem)]`}>
@@ -20,6 +20,7 @@ export default function PageIntro({ index, title, lede, accent = 'indigo', crumb
       </Fade>
       <MaskLines
         as="h1"
+        id={id}
         lines={lines}
         delay={0.06}
         className="mt-5 font-display font-bold tracking-mega leading-[1.0] text-[clamp(2.5rem,7vw,5.6rem)]"

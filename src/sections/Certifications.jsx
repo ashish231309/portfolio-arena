@@ -74,7 +74,7 @@ export default function Certifications({ bare = false }) {
   const H = bare ? 'h2' : 'h3'
 
   return (
-    <Wrapper id="certifications" bg="deep" accent="lime" className={sectionPadding}>
+    <Wrapper id="certifications" bg="deep" accent="lime" className={sectionPadding} {...(!bare ? { labelledBy: 'certifications-title' } : {})}>
       <div className={container}>
         {!bare && (
           <SectionHead
@@ -95,8 +95,10 @@ export default function Certifications({ bare = false }) {
         </Fade>
       </div>
       <div
-        className="no-scrollbar overflow-x-auto snap-x snap-mandatory edge-fade-x"
+        className="no-scrollbar overflow-x-auto snap-x snap-mandatory edge-fade-x focus-visible:outline-none"
         data-cursor="drag"
+        role="region"
+        tabIndex={0}
         aria-label="Certifications rail"
       >
         <div className={`${container} flex gap-5 pb-6 pt-2 w-max min-w-full`}>

@@ -67,6 +67,18 @@ export function SiteProvider({ children }) {
     return () => window.removeEventListener('pointermove', move)
   }, [px, py])
 
+  // U25: update the browser chrome (address bar) colour to match the current
+  // section tone. Cream for light sections, deep navy for dark.
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (!meta) return undefined
+    const prev = meta.getAttribute('content')
+    meta.setAttribute('content', tone === 'dark' ? '#0B1120' : '#F6F2E8')
+    return () => {
+      if (prev !== null) meta.setAttribute('content', prev)
+    }
+  }, [tone])
+
   const value = useMemo(
     () => ({
       px,

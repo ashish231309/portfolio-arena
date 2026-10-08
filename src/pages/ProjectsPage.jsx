@@ -16,12 +16,13 @@ export default function ProjectsPage() {
       .join(' and ')}.`,
   )
   return (
-    <Section bg="ivory" accent="indigo" className="pb-[clamp(5rem,10vh,8rem)]">
+    <Section bg="ivory" accent="indigo" className="pb-[clamp(5rem,10vh,8rem)]" labelledBy="projects-page-title">
       <PageIntro
         index="03"
         crumb="/projects"
         title={[`${capitalize(spellNumber(projects.length))} ${projects.length === 1 ? 'recreation' : 'recreations'},`, 'one obsession:']}
         lede="Studying real production sites by rebuilding them — honestly labelled, fully owned, no fake demos."
+        id="projects-page-title"
       />
       <div className="mx-auto w-full max-w-[1200px] px-[clamp(1.25rem,4vw,3rem)] space-y-8">
         {projects.map((p, i) => (

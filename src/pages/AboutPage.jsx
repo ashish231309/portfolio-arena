@@ -8,7 +8,7 @@ export default function AboutPage() {
   usePageMeta('About', 'Who Ashish Kumar is: a CSE student building with software, web and Generative AI — and what he is exploring now.')
   return (
     <>
-      <Section bg="ivory" accent="cyan"
+      <Section bg="ivory" accent="cyan" labelledBy="about-page-title"
         intro={
           <PageIntro
             index="01"
@@ -16,6 +16,7 @@ export default function AboutPage() {
             title={['Student first,', 'builder always.']}
             lede="The short version of who I am, what I study, and what I am currently teaching myself."
             accent="cyan"
+            id="about-page-title"
           />
         }>
         <About bare />

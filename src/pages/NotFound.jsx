@@ -6,11 +6,12 @@ import { usePageMeta } from '../hooks/usePageMeta'
 export default function NotFound() {
   usePageMeta('404', 'Page not found.')
   return (
-    <Section bg="ink" accent="coral" grid className="dark-zone min-h-[100svh] flex items-center">
+    <Section bg="ink" accent="coral" grid className="dark-zone min-h-[100svh] flex items-center" labelledBy="notfound-title">
       <div className={`${container} py-40`}>
         <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-coral">error 404 — route not found</p>
         <MaskLines
           as="h1"
+          id="notfound-title"
           className="mt-5 font-display font-bold tracking-mega text-ivory text-[clamp(3rem,10vw,7rem)] leading-none"
           lines={['This page', 'never shipped.']}
         />

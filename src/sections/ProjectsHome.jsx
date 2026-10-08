@@ -93,14 +93,14 @@ function FeaturedStory({ project }) {
             ),
           },
           {
-            head: `02 — ${capitalize(spellNumber(project.sections.length))} sections rebuilt`,
+            head: `02 — ${capitalize(spellNumber((project.sections || project.pages).length))} ${project.sections ? 'sections' : 'pages'} rebuilt`,
             body: (
               <>
                 <p className="text-muted leading-relaxed">
                   Every band of the page exists as its own React component — composed, not copied:
                 </p>
                 <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1.5 font-mono text-[12px] text-ink/80">
-                  {project.sections.map((s, i) => (
+                  {(project.sections || project.pages).map((s, i) => (
                     <li key={s} className="flex items-baseline gap-2 border-b border-ink/10 py-1">
                       <span className="text-indigo-ink">{String(i + 1).padStart(2, '0')}</span> {s}
                     </li>
@@ -196,7 +196,7 @@ export default function ProjectsHome({ bare = false }) {
   const secondary = projects.find((p) => !p.featured)
 
   return (
-    <Section id="projects" bg="ivory" accent="indigo" className={sectionPadding}>
+    <Section id="projects" bg="ivory" accent="indigo" className={sectionPadding} labelledBy="projects-title">
       <div className={container}>
         {!bare && (
           <SectionHead index="03" title={['Selected work —', 'studied, rebuilt, owned.']} note="Projects" accent="indigo" id="projects-title" />

@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { EASE, staggerParent, maskLineChild, fadeUpChild } from '../lib/motion'
 
 /** Line-by-line clip-mask reveal for display type. */
-export function MaskLines({ lines, className = '', lineClassName = '', as = 'div', viewport = true, delay = 0 }) {
+export function MaskLines({ lines, className = '', lineClassName = '', as = 'div', viewport = true, delay = 0, ...rest }) {
   const Tag = motion[as] || motion.div
   return (
     <Tag
@@ -13,6 +13,7 @@ export function MaskLines({ lines, className = '', lineClassName = '', as = 'div
       animate={!viewport ? 'show' : undefined}
       variants={staggerParent(0.1, delay)}
       viewport={{ once: true, margin: '-12% 0px -12% 0px' }}
+      {...rest}
     >
       {lines.map((line, i) => (
         <span className="mask-line" key={i}>

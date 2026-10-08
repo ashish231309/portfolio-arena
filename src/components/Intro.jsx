@@ -16,7 +16,8 @@ export default function Intro() {
 
   useEffect(() => {
     if (!show) return undefined
-    const t1 = setTimeout(() => setGone(true), 1250)
+    // U19: total intro duration 1 s (650 ms hold + 350 ms slide-up), down from ~2 s.
+    const t1 = setTimeout(() => setGone(true), 650)
     const t2 = setTimeout(() => {
       setShow(false)
       try {
@@ -24,7 +25,7 @@ export default function Intro() {
       } catch {
         /* noop */
       }
-    }, 1950)
+    }, 1000)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
@@ -36,9 +37,9 @@ export default function Intro() {
   return (
     <motion.div
       aria-hidden="true"
-      className="fixed inset-0 z-[110] bg-ink flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-[110] bg-ink flex items-center justify-center overflow-hidden pointer-events-none"
       animate={gone ? { y: '-100%' } : { y: 0 }}
-      transition={{ duration: 0.7, ease: EASE }}
+      transition={{ duration: 0.35, ease: EASE }}
     >
       <div className="text-center">
         <div className="mask-line">

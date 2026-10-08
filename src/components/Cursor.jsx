@@ -7,10 +7,20 @@ const MODES = {
   default: { ring: 34, dot: 6, label: '' },
   link: { ring: 50, dot: 4, label: '' },
   button: { ring: 54, dot: 4, label: '' },
-  project: { ring: 86, dot: 0, label: 'VIEW' },
-  cert: { ring: 78, dot: 0, label: 'OPEN' },
-  contact: { ring: 96, dot: 0, label: "LET'S TALK" },
-  drag: { ring: 80, dot: 0, label: 'SWIPE →' },
+  project: { ring: 86, dot: 2, label: 'VIEW' },
+  cert: { ring: 78, dot: 2, label: 'OPEN' },
+  contact: { ring: 96, dot: 2, label: "LET'S TALK" },
+  drag: { ring: 80, dot: 2, label: 'SCROLL →' },
+}
+
+// Blend + filter stack (U1/U2): mix-blend-difference inverts against any
+// background; saturate(0) strips the muddy-olive artefact that difference
+// produces over mid-saturated brand colours; contrast(2.5) pushes the result
+// to pure black or pure white, giving an automatic light-on-dark / dark-on-light
+// cursor without any per-section JS.
+const CURSOR_BLEND = {
+  mixBlendMode: 'difference',
+  filter: 'saturate(0) contrast(2.5)',
 }
 
 /**
@@ -23,7 +33,11 @@ export default function Cursor() {
   const reduced = useReducedMotionPref()
   const { px, py, setCursorMode, setCursorLabel } = useSite()
   const [mode, setMode] = useState('default')
-  const [visible, setVisible] = useState(false)
+  // If a fine pointer and motion allowed, the cursor should be visible
+  // immediately on mount — waiting for the first pointermove causes a FOUC
+  // where the native arrow is already hidden but the custom ring hasn't faded
+  // in yet (U4). Coarse / reduced-motion users never mount the cursor at all.
+  const [visible, setVisible] = useState(fine && !reduced)
 
   const ringX = useSpring(px, { stiffness: 210, damping: 22, mass: 0.5 })
   const ringY = useSpring(py, { stiffness: 210, damping: 22, mass: 0.5 })
@@ -75,14 +89,14 @@ export default function Cursor() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] pointer-events-none transition-opacity duration-300"
+      className="fixed inset-0 z-[120] pointer-events-none transition-opacity duration-300"
       aria-hidden="true"
       style={{ opacity: visible ? 1 : 0 }}
     >
       {ghosts.map((g, i) => (
         <motion.span
           key={i}
-          className="fixed top-0 left-0 rounded-full border border-ivory mix-blend-difference"
+          className="fixed top-0 left-0 rounded-full border border-white"
           style={{
             x: g.x,
             y: g.y,
@@ -92,11 +106,12 @@ export default function Cursor() {
             translateX: '-50%',
             translateY: '-50%',
             opacity: labeled ? 0 : g.o,
+            ...CURSOR_BLEND,
           }}
         />
       ))}
       <motion.span
-        className="fixed top-0 left-0 rounded-full border-[1.5px] border-ivory mix-blend-difference"
+        className="fixed top-0 left-0 rounded-full border-[1.5px] border-white"
         style={{
           x: ringX,
           y: ringY,
@@ -105,11 +120,12 @@ export default function Cursor() {
           scale: m.ring / 34,
           translateX: '-50%',
           translateY: '-50%',
-          opacity: labeled ? 0 : 0.85,
+          opacity: labeled ? 0 : 0.9,
+          ...CURSOR_BLEND,
         }}
       />
       <motion.span
-        className="fixed top-0 left-0 rounded-full bg-ivory mix-blend-difference"
+        className="fixed top-0 left-0 rounded-full bg-white"
         style={{
           x: px,
           y: py,
@@ -118,6 +134,7 @@ export default function Cursor() {
           translateX: '-50%',
           translateY: '-50%',
           opacity: m.dot ? 1 : 0,
+          ...CURSOR_BLEND,
         }}
       />
       <motion.span

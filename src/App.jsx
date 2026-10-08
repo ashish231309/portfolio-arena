@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom'
 import { motion, AnimatePresence, MotionConfig } from 'motion/react'
 import { SiteProvider } from './lib/site'
 import { LenisProvider, useLenis, useScrollToTop } from './lib/scroll'
@@ -90,13 +90,18 @@ function RouteScroll() {
   const lenis = useLenis()
   const scrollToTop = useScrollToTop()
   const { pathname } = useLocation()
+  const navType = useNavigationType()
 
   useEffect(() => {
+    // U18: only force scroll-to-top on forward navigations (link clicks /
+    // programmatic pushes). POP (Back/Forward) should let the browser restore
+    // the previous scroll position instead of snapping to the top.
+    if (navType === 'POP') return
     scrollToTop({ immediate: true })
     if (!lenis) return undefined
     const id = requestAnimationFrame(() => lenis.resize())
     return () => cancelAnimationFrame(id)
-  }, [pathname, lenis, scrollToTop])
+  }, [pathname, navType, lenis, scrollToTop])
 
   return null
 }

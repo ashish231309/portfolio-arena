@@ -11,7 +11,7 @@ Design identity: **“Signal & Ink”** — editorial typography on warm ivory, 
 ## Stack
 
 - **React 19** + **Vite 8** (JavaScript/JSX, no TypeScript)
-- **Tailwind CSS 3.4** (custom token layer in `tailwind.config.js`)
+- **Tailwind CSS 4** (custom token layer in `tailwind.config.js`)
 - **Motion for React** (`motion`) — springs, scroll-linked & triggered animation, route transitions
 - **Lenis** — inertial smooth scrolling (disabled under `prefers-reduced-motion`)
 - **Lucide React** — icons

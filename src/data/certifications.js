@@ -16,7 +16,7 @@ export const certifications = [
     provider: 'Google',
     title: 'Gemini Certified University Student',
     received: 'September 13, 2026',
-    credential: null,
+    credential: '194028428',
     kind: 'Certification',
     blurb: 'Generative AI fundamentals, Gemini functionality, prompting, responsible AI, and using Gemini for content creation and personalised learning.',
     file: '/certificates/gemini-certified-university-student.pdf',
@@ -27,9 +27,9 @@ export const certifications = [
     provider: 'Google',
     title: 'Gemini Certified Educator',
     received: 'August 19, 2026',
-    credential: null,
+    credential: '191854572',
     kind: 'Certification',
-    blurb: 'Generative AI for educators with Gemini — AI-assisted teaching, productivity and lesson workflows. A separate credential from the University Student certification.',
+    blurb: 'Generative AI for educators with Gemini — AI-assisted teaching, productivity and lesson workflows, earned in addition to the University Student certification.',
     file: '/certificates/gemini-certified-educator.pdf',
     accent: 'cyan',
   },
@@ -52,7 +52,7 @@ export const certifications = [
     received: 'September 2025 — November 2025',
     credential: 'IC/25/26/6925',
     kind: 'Internship Certificate',
-    blurb: 'Digital completion certificate for the social media marketing internship tenure (Sep–Nov 2025). Matches the internship listed under Experience.',
+    blurb: 'Completion certificate for the YSF social media marketing internship (Sep–Nov 2025), issued at the end of the tenure listed in Experience.',
     file: '/certificates/ysf-internship-certificate.pdf',
     accent: 'indigo',
   },
@@ -81,4 +81,4 @@ export const certifications = [
 ]
 
 export const physicalCertificatesNote =
-  'Physical certificates (NCC B, NCC C, school & college sports) are listed as text under Activities and are intentionally not published as files.'
+  'NCC B & C certificates and school/college sports awards are listed in Activities. I’ve kept the physical copies offline; only the credentials available as public digital certificates are shown above.'

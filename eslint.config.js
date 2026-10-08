@@ -39,7 +39,9 @@ export default [
       ...react.configs.flat.recommended.rules,
       ...react.configs.flat['jsx-runtime'].rules,
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+      // U30: missing dependencies must fail lint — a warning that doesn't break
+      // the build ships silent effect bugs.
+      'react-hooks/exhaustive-deps': 'error',
       // This codebase is plain JSX by design (no TypeScript, no prop-types).
       'react/prop-types': 'off',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' }],

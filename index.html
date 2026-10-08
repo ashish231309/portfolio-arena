@@ -3,6 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- U4: hide the native cursor *before* paint on fine pointers so there is no
+         flash of the native arrow before the custom ring takes over. The React
+         effect in Cursor.jsx is responsible for removing this class if the
+         pointer type changes after load. -->
+    <script>
+      (function () {
+        try {
+          if (window.matchMedia('(pointer: fine)').matches &&
+              !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('has-cursor')
+          }
+        } catch (e) { /* no-op: legacy browser, native cursor stays */ }
+      })()
+    </script>
     <title>Ashish Kumar — Computer Science Student · Software, Web & Generative AI</title>
     <meta
       name="description"
@@ -38,6 +52,7 @@
     <!-- Above-the-fold faces: display (h1/hero) + body. Mono loads with the rest. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/space-grotesk-latin-wght-normal.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/manrope-latin-wght-normal.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-latin-wght-normal.woff2" crossorigin />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",

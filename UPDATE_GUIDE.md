@@ -4,7 +4,7 @@ Everything editable lives in `src/data/*.js` and `public/`. Components read from
 
 ## 1. Personal basics
 `src/data/profile.js`
-- `name`, `headline`, `location`, `coordinates`, `email`
+- `name`, `headline`, `location`, `coordinates`
 - `social.*` — only real public profiles
 - `currentlyExploring` — infrastructure topics still being learned (Linux, Docker, hosting, APIs). They render as dashed chips under “learning targets — not yet claimed as expertise”; keep that framing for **these** chips. (Full Stack Development is a claimed expertise area — see §4.)
 - `facts` — the four hero micro-facts

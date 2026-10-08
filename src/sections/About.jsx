@@ -52,7 +52,7 @@ export default function About({ bare = false }) {
   const Wrapper = bare ? SectionSurface : Section
 
   return (
-    <Wrapper id="about" bg="ivory" accent="cyan" className={sectionPadding}>
+    <Wrapper id="about" bg="ivory" accent="cyan" className={sectionPadding} {...(!bare ? { labelledBy: 'about-title' } : {})}>
       <div className={container}>
         {!bare && (
           <SectionHead index="01" title={['A student developer,', 'building in public.']} note="About" accent="cyan" id="about-title" />
