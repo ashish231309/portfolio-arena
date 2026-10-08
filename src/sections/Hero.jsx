@@ -28,26 +28,35 @@ function OrbitVisual() {
   const fine = useFinePointer()
   const reduced = useReducedMotionPref()
   const { width, height } = useViewport()
-  // Very slight, smooth tilt.
-  const rotateX = useSpring(useTransform(py, [0, height], [2.5, -2.5], { clamp: true }), { stiffness: 80, damping: 26 })
-  const rotateY = useSpring(useTransform(px, [0, width], [-3, 3], { clamp: true }), { stiffness: 80, damping: 26 })
+  // Very nearly imperceptible board-on-marble tilt.
+  const rotateX = useSpring(useTransform(py, [0, height], [1.5, -1.5], { clamp: true }), { stiffness: 90, damping: 28 })
+  const rotateY = useSpring(useTransform(px, [0, width], [-2, 2], { clamp: true }), { stiffness: 90, damping: 28 })
+  const tiltStyle = fine && !reduced ? { rotateX, rotateY, transformPerspective: 1200 } : undefined
 
-  // Pills orbit on their respective rings. Sizing is kept deliberately small —
-  // matches the original HTML pills (≈10px monospace, tight padding) converted
-  // into SVG user units for a 200×200 viewBox.
-  //   • SW   — outer purple ring  (r=92, 40s spin-slow), purple dot at top
-  //   • WEB  — middle cyan ring   (r=68, 28s spin-rev),  cyan dot
-  //   • GENAI— inner coral ring   (r=44, 22s spin-slow), coral dot
-  const pill = (label, color, cx, cy) => {
-    const w = 20
-    const h = 8
+  // Orbit ring radii (in 200×200 SVG units).
+  const R_OUT = 92   // purple 40s
+  const R_MID = 68   // cyan   28s rev
+  const R_IN  = 44   // coral  22s
+  // Start angles (in degrees) for each pill on its ring.
+  const SW_A  = -30
+  const WEB_A = 130
+  const GEN_A = 250
+  const rad = (d) => (d * Math.PI) / 180
+
+  // Pills are drawn deliberately small so they read as tags on the rings,
+  // not as large buttons. viewBox is 200×200; values below are in SVG units.
+  const pill = (label, color, angle, r) => {
+    const w = 17
+    const h = 7
+    const cx = 100 + Math.cos(rad(angle)) * r
+    const cy = 100 + Math.sin(rad(angle)) * r
     return (
       <g transform={`translate(${cx},${cy})`}>
         <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={h / 2} ry={h / 2}
-          fill="#FFFCF5" stroke={color} strokeOpacity="0.5" strokeWidth="0.5" />
-        <text x={0} y={2.3} textAnchor="middle"
+          fill="#FFFCF5" stroke={color} strokeOpacity="0.45" strokeWidth="0.4" />
+        <text x={0} y={2.2} textAnchor="middle"
           fontFamily="ui-monospace,SFMono-Regular,Menlo,monospace"
-          fontSize="4.6" letterSpacing="0.9" fill={color}
+          fontSize="3.9" letterSpacing="0.7" fill={color}
           style={{ textTransform: 'uppercase', fontWeight: 600 }}>
           {label}
         </text>
@@ -55,66 +64,61 @@ function OrbitVisual() {
     )
   }
 
-  const tiltStyle = fine && !reduced ? { rotateX, rotateY, transformPerspective: 1100 } : undefined
-
-  // Pills are placed at angles where they are naturally readable-ish when the
-  // page loads, but they rotate with their ring (so they go upside-down at the
-  // top — no forced-readability trick, per spec).
-  const SW_DEG  = -20   // outer purple
-  const WEB_DEG = 120   // middle cyan
-  const GEN_DEG = 240   // inner coral
-  const toRad = (d) => (d * Math.PI) / 180
-
   return (
-    <div className="relative w-full aspect-square">
+    // Card is a LANDSCAPE rounded rectangle (not a square) — matches the
+    // outline in the user's sketch. The circular orbits live in a square
+    // sub-container centered inside, sized to the card's height, so rings
+    // stay perfectly circular and leave margin on all four sides for the
+    // code chips, ring extents, and breathing room.
+    <div className="relative w-full">
       <motion.div
-        className="absolute inset-0 rounded-[24px] bg-deep shadow-[0_24px_60px_-28px_rgba(16,22,43,0.55)] overflow-hidden"
+        className="relative w-full aspect-[5/4] rounded-[24px] bg-deep shadow-[0_24px_60px_-28px_rgba(16,22,43,0.55)] overflow-hidden"
         style={tiltStyle}
         aria-hidden="true"
       >
-        {/* subtle grid texture matching bg-grid-dark (same as Skills/Certs) */}
-        <div className="absolute inset-0 bg-grid-dark opacity-50" />
+        <div className="absolute inset-0 bg-grid-dark opacity-50" aria-hidden="true" />
+        <CardGlow accent="rgba(108,92,231,0.20)" />
 
-        {/* soft cursor-following indigo glow inside the card */}
-        <CardGlow accent="rgba(108,92,231,0.22)" />
-
-        {/* outer purple ring (40s, spin-slow) with SW pill + purple dot */}
-        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-slow motion-reduce:animate-none">
-          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(108,92,231,0.35)" strokeWidth="0.6" strokeDasharray="3 5" />
-          <circle cx="100" cy="8" r="2.4" fill="#6C5CE7" />
-          {pill('SW', '#6C5CE7', 100 + Math.cos(toRad(SW_DEG)) * 92, 100 + Math.sin(toRad(SW_DEG)) * 92)}
-        </svg>
-
-        {/* middle cyan ring (28s, reverse) with WEB pill + cyan dot */}
-        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-rev motion-reduce:animate-none">
-          <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(39,211,242,0.4)" strokeWidth="0.7" strokeDasharray="1 4" />
-          <circle cx="100" cy="32" r="2" fill="#27D3F2" />
-          {pill('WEB', '#27D3F2', 100 + Math.cos(toRad(WEB_DEG)) * 68, 100 + Math.sin(toRad(WEB_DEG)) * 68)}
-        </svg>
-
-        {/* inner coral ring (22s) with GENAI pill + coral dot */}
-        <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" style={{ animation: 'spinSlow 22s linear infinite' }}>
-          <circle cx="100" cy="100" r="44" fill="none" stroke="rgba(255,107,107,0.45)" strokeWidth="0.7" strokeDasharray="8 6" />
-          <circle cx="144" cy="100" r="1.8" fill="#FF6B6B" />
-          {pill('GENAI', '#FF6B6B', 100 + Math.cos(toRad(GEN_DEG)) * 44, 100 + Math.sin(toRad(GEN_DEG)) * 44)}
-        </svg>
-
-        {/* AK core — circular */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="relative grid place-items-center w-[72px] h-[72px] rounded-full bg-ink text-ivory shadow-[0_0_0_1px_rgba(246,242,232,0.1),0_10px_24px_-10px_rgba(108,92,231,0.55)]">
-            <span className="font-display font-bold text-xl tracking-tighter2">AK</span>
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-lime animate-pulse-dot" />
+        {/* Square orbit field, sized to ~86% of card height and centered.
+            Because the card is landscape (5:4), height is the constraining
+            dimension — this guarantees perfect circles with horizontal
+            breathing room on both sides. */}
+        <div className="absolute left-1/2 top-1/2 h-[86%] aspect-square -translate-x-1/2 -translate-y-1/2">
+          {/* outer purple */}
+          <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-slow motion-reduce:animate-none">
+            <circle cx="100" cy="100" r={R_OUT} fill="none" stroke="rgba(108,92,231,0.35)" strokeWidth="0.6" strokeDasharray="3 5" />
+            <circle cx={100 + Math.cos(rad(-90)) * R_OUT} cy={100 + Math.sin(rad(-90)) * R_OUT} r="2.2" fill="#6C5CE7" />
+            {pill('SW', '#6C5CE7', SW_A, R_OUT)}
+          </svg>
+          {/* middle cyan (reverse) */}
+          <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-rev motion-reduce:animate-none">
+            <circle cx="100" cy="100" r={R_MID} fill="none" stroke="rgba(39,211,242,0.4)" strokeWidth="0.7" strokeDasharray="1 4" />
+            <circle cx={100 + Math.cos(rad(-90)) * R_MID} cy={100 + Math.sin(rad(-90)) * R_MID} r="1.9" fill="#27D3F2" />
+            {pill('WEB', '#27D3F2', WEB_A, R_MID)}
+          </svg>
+          {/* inner coral */}
+          <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" style={{ animation: 'spinSlow 22s linear infinite' }}>
+            <circle cx="100" cy="100" r={R_IN} fill="none" stroke="rgba(255,107,107,0.45)" strokeWidth="0.7" strokeDasharray="8 6" />
+            <circle cx={100 + R_IN} cy="100" r="1.7" fill="#FF6B6B" />
+            {pill('GENAI', '#FF6B6B', GEN_A, R_IN)}
+          </svg>
+          {/* AK core — circle, centered */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div className="relative grid place-items-center w-[70px] h-[70px] rounded-full bg-ink text-ivory shadow-[0_0_0_1px_rgba(246,242,232,0.1),0_10px_24px_-10px_rgba(108,92,231,0.55)]">
+              <span className="font-display font-bold text-xl tracking-tighter2">AK</span>
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-lime animate-pulse-dot" />
+            </div>
           </div>
         </div>
 
-        {/* code chips inside the card — positioned safely away from edges */}
-        <div className="absolute left-6 top-6 hidden sm:block">
+        {/* code chips live inside the card but outside the orbit square */}
+        <div className="absolute left-5 top-5 hidden sm:block">
           <code className="block rounded-sm2 bg-paper/95 border border-ivory/15 px-2.5 py-1.5 font-mono text-[10px] text-muted shadow-lift">
             <GitCommitHorizontal size={10} className="inline mr-1 text-indigo" aria-hidden="true" />
             git commit -m &quot;learning&quot;
           </code>
         </div>
-        <div className="absolute right-6 bottom-6 hidden sm:block">
+        <div className="absolute right-5 bottom-5 hidden sm:block">
           <code className="block rounded-md2 bg-ink/90 border border-ivory/10 px-2.5 py-1.5 font-mono text-[10px] text-cyan shadow-lift">
             const curious = true<span className="animate-blink">_</span>
           </code>
